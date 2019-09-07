@@ -1,0 +1,195 @@
+@import '~css/var.less';
+h2 {
+    font-size: 18px;
+    color: #333;
+}
+
+h3 {
+    font-size: 16px;
+    color: #333;
+}
+
+h4 {
+    font-size: 14px;
+}
+
+.bg-white {
+    background-color: #fff;
+}
+
+.color--blue {
+    color: #8698EC;
+}
+
+.color--red {
+    color: #FF7777;
+}
+
+.color--999 {
+    color: #999;
+}
+
+.no-data-panel {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    &.relative {
+        position: relative;
+        left: 0;
+        top: 0;
+        transform: none;
+    }
+    .icon {
+        font-size: 85px;
+    }
+    h3 {
+        font-size: 16px;
+        color: #999;
+        margin-top: 15px;
+        margin-bottom: 8px;
+    }
+}
+
+.s-tip {
+    font-size: 12px;
+    color: #999;
+}
+
+.red-color {
+    color: #FF7777
+}
+
+.image-cover {
+    background-size: cover;
+    background-position: 50% 50%;
+}
+
+.btn {
+    border-radius: 100px;
+    padding: 5px 28px;
+    font-size: 16px;
+    display: inline-block;
+    color: #8698EC;
+    border: 1px solid #8698EC;
+    text-align: center;
+}
+
+.btn--primary {
+    background-color: #8698EC;
+    color: #fff;
+}
+
+.btn--default {
+    border-color: #999999;
+    color: #999999;
+}
+
+.btn-gradient--primary {
+    border-radius: 100px;
+    padding: 5px 10px;
+    font-size: 12px;
+    display: inline-block;
+    background-image: linear-gradient(-90deg, #8886EC 0%, #8698EC 100%);
+    color: #fff;
+}
+
+.weui-dialog__ft {
+    .weui-dialog__btn_default {
+        color: #8698EC!important;
+    }
+
+    .weui-dialog__btn_primary {
+        color: #666666!important;
+    }
+}
+
+
+.infinite-loading-container{
+    .loading-default{
+        display: none!important;
+    }
+}
+
+.weui-toast_success{
+    .weui-icon-success-no-circle{
+        margin-bottom: 15px;
+        &:before {
+            content: "\e707"!important;
+            font-family:"iconfont" !important;
+            font-size:35px!important;
+        }
+    }
+}
+
+.weui-toast.weui-toast_forbidden{
+    color:#fff!important;
+    .weui-icon_toast.weui-icon-success-no-circle{
+        margin-bottom: 15px;
+        &:before{
+            content: "\e709"!important;
+            font-family:"iconfont" !important;
+            color:#fff;
+            font-size:35px;
+        }
+    }
+    .weui-toast__content{
+        margin-top: 0!important;
+    }
+}
+
+.drop-down {
+    position: absolute;
+    top: 55px;
+    right: 15px;
+    z-index: 102;
+    background: #FFFFFF;
+    box-shadow: 0 0 10px 0 rgba(166, 166, 166, 0.30);
+    .cover{
+        position: fixed;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+    }
+    ul {
+        position:relative;
+        &:before{
+            content:'';
+            display: block;
+            position: absolute;
+            border-style: solid;
+            border-color: transparent transparent #fff transparent;
+            border-width: 8px;
+            width:0;
+            height:0;
+            top: -16px;
+            right: 8px;
+        }
+        li {
+            .border-mini-bottom;
+            padding: 15px 35px;
+            font-size:15px;
+            &:last-child:after {
+                border-bottom-width: 0
+            }
+            &.active{
+                color: #8698EC;
+            }
+            i{
+                margin-right: 6px;
+            }
+        }
+    }
+    // &:after{
+    //     content:'';
+    //     display: block;
+    //     border-width: 5px;
+    //     border-style: solid;
+    //     border-color:transparent transparent #fff transparent;
+    //     position: absolute;
+    //     top:-10px;
+    //     right:3px;
+    // }
+}
