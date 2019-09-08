@@ -164,7 +164,7 @@
                 this.showUserInfo = true;
             }else{
                 this.isLogin = false;
-                this.showUserInfo = false;
+                this.showUserInfo = true;
             }
             this.getLoan();
             this.getPersonInfo();

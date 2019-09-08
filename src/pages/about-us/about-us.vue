@@ -46,7 +46,7 @@
                 <img :src="img3" alt="">
             </div>
             <div class="btn-box">
-                <router-link to="/" class="common-small-bth w200">比较贷方</router-link>
+                <router-link to="/contact-us" class="common-small-bth w200">比较贷方</router-link>
             </div>
         </div>
         <div class="job">

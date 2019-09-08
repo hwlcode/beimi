@@ -14,7 +14,8 @@ export default new Vuex.Store({
         bookInfo: null,
         loginNum: 0,
         logoUrl: null,
-        isLogin: false
+        isLogin: false,
+        needMoney: 0
     },
     getters: {},
     mutations: {
@@ -37,7 +38,10 @@ export default new Vuex.Store({
             state.userId = null;
         },
         SET_MOBILE(state, val) {
-            state.mobile = val
+            state.mobile = val;
+        },
+        SET_NEED_MONEY(state, val){
+            state.needMoney = val;
         }
     },
     actions: {}

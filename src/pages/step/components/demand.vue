@@ -86,6 +86,25 @@
             }
         },
         created() {
+            let money = parseInt(this.$store.state.needMoney, 10);
+            if(money > 0 && money <= 1000){
+                this.moneyValue = 1;
+            }
+            else if(money > 1000 && money <= 5000){
+                this.moneyValue = 2;
+            }
+            else if(money > 5000 && money <= 10000){
+                this.moneyValue = 3;
+            }
+            else if(money > 10000 && money <= 20000){
+                this.moneyValue = 4;
+            }
+            else if(money > 20000 && money <= 50000){
+                this.moneyValue = 5;
+            }
+            else if(money > 50000){
+                this.moneyValue = 6;
+            }
             this.getLoan();
         },
         mounted() {

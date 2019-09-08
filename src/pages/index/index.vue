@@ -6,8 +6,8 @@
                 <h3>为您的小企业定制完美的贷款</h3>
                 <h4>大数据匹配 方案定制 快速获得资金</h4>
                 <div>
-                    <input type="text" placeholder="￥您需要多少钱？">
-                    <router-link to="/step" class="common-small-bth">获取方案</router-link>
+                    <input type="text" placeholder="￥您需要多少钱？" v-model="needMoney">
+                    <router-link :to="{path: '/step'}" class="common-small-bth" @click.native="setNeedMoney">获取方案</router-link>
                 </div>
             </div>
         </div>
@@ -21,7 +21,7 @@
                 <dt></dt>
                 <dd><h4 class="common-title">成功</h4>只需24小时即可获得所需资金<br>这样您就可以重新开展业务。</dd>
             </dl>
-            <router-link to="/" class="common-small-bth">看看你是否符合资格</router-link>
+            <router-link to="/step" class="common-small-bth">看看你是否符合资格</router-link>
         </div>
 
         <div class="info">
@@ -31,14 +31,14 @@
                 <dd>我们帮助像你这样的小企业主获得超过14亿的贷款。<br>这意味着我们必须持续提高自己的贷款匹配能力。</dd>
                 <dd><img :src="img1"></dd>
                 <dd>
-                    <router-link to="/" class="common-small-bth w200">比较贷方</router-link>
+                    <router-link to="/contact-us" class="common-small-bth w200">比较贷方</router-link>
                 </dd>
                 <dt>获得快速资助</dt>
                 <dd class="mb10">时间紧迫？您只需15分钟即可填写我们的在线申请表<br>这比你在当地咖啡馆买拿铁咖啡要快</dd>
                 <dd>资金极速到账 - 您可以在批准后24小时内获得现金</dd>
                 <dd><img :src="img2"></dd>
                 <dd>
-                    <router-link to="/" class="common-small-bth w200">开始吧</router-link>
+                    <router-link to="/step" class="common-small-bth w200">开始吧</router-link>
                 </dd>
             </dl>
         </div>
@@ -59,13 +59,16 @@
             return {
                 img1: require('./images/5.png'),
                 img2: require('./images/6.png'),
+                needMoney: ''
             }
         },
         mounted() {
 
         },
         methods: {
-
+            setNeedMoney() {
+                this.$store.commit('SET_NEED_MONEY', this.needMoney || 0);
+            }
         },
         components: {
             'v-header': headerComponent,

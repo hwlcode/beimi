@@ -84,14 +84,23 @@ const router = new Router({
             }, {
                 name: 'company',
                 path: 'company',
+                meta: {
+                    requireAuth: true
+                },
                 component: resolve => require(['pages/step/components/company'], resolve)
             }, {
                 name: 'credit',
                 path: 'credit',
+                meta: {
+                    requireAuth: true
+                },
                 component: resolve => require(['pages/step/components/credit'], resolve)
             }, {
                 name: 'loan',
                 path: 'loan',
+                meta: {
+                    requireAuth: true
+                },
                 component: resolve => require(['pages/step/components/loan'], resolve)
             }]
         }]

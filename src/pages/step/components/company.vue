@@ -8,7 +8,8 @@
                 <x-input title="" placeholder="请输入社会信用代码" v-model="companySocialCreditCode" type="text"></x-input>
             </group>
             <group title="经营城市" label-width="0" label-align="right">
-                <x-address title="" v-model="selectedCity" value-text-align="left" :list="ChinaAddressV4Data" placeholder="请选择经营城市"></x-address>
+                <x-address title="" v-model="selectedCity" value-text-align="left" :list="ChinaAddressV4Data"
+                           placeholder="请选择经营城市"></x-address>
             </group>
             <group title="经营地址" label-width="0" label-align="right">
                 <x-input title="" placeholder="请输入经营地址" v-model="companyBusinessAddress" type="tel"></x-input>
@@ -28,12 +29,14 @@
             </group>
 
             <group title="公司每年上缴税金额度" label-width="0" label-align="right">
-                <popup-picker title="" placeholder="请选择公司税金" :data="companyAnnualTaxList" show-name v-model="companyAnnualTax"
+                <popup-picker title="" placeholder="请选择公司税金" :data="companyAnnualTaxList" show-name
+                              v-model="companyAnnualTax"
                               value-text-align="left"></popup-picker>
             </group>
 
             <group title="公司年利润" label-width="0" label-align="right">
-                <popup-picker title="" placeholder="请选择公司年利润" :data="companyAnnualProfitList" show-name v-model="companyAnnualProfit"
+                <popup-picker title="" placeholder="请选择公司年利润" :data="companyAnnualProfitList" show-name
+                              v-model="companyAnnualProfit"
                               value-text-align="left"></popup-picker>
             </group>
             <div class="tips-container">
@@ -93,34 +96,44 @@
                 ]],
                 companyFoundYears: [],
                 companyAnnualProfit: [],
-                companyAnnualTax:  [],
+                companyAnnualTax: [],
                 companyCreditScore: '',
+
+                isLogin: false
             }
         },
         created() {
-
+            if(this.$store.state.isLogin){
+                this.isLogin = true;
+                this.showCompanyInfo = true;
+            }else{
+                this.isLogin = false;
+                this.showCompanyInfo = true;
+            }
+            this.getCompanyInfo();
+            this.getCompanyOperate();
         },
         mounted() {
 
         },
         methods: {
             submitInfo() {
-                // if(this.companyName == ''){
-                //     this.toast('请选输入的公司名称');
-                //     return;
-                // }
-                // if(this.companySocialCreditCode == ''){
-                //     this.toast('请输入社会信用代码');
-                //     return;
-                // }
-                // if(this.selectedCity.length == 0){
-                //     this.toast('请选择经营城市');
-                //     return;
-                // }
-                // if(this.companyBusinessAddress == ''){
-                //     this.toast('请输入经营地址');
-                //     return;
-                // }
+                if (this.companyName == '') {
+                    this.toast('请选输入的公司名称');
+                    return;
+                }
+                if (this.companySocialCreditCode == '') {
+                    this.toast('请输入社会信用代码');
+                    return;
+                }
+                if (this.selectedCity.length == 0) {
+                    this.toast('请选择经营城市');
+                    return;
+                }
+                if (this.companyBusinessAddress == '') {
+                    this.toast('请输入经营地址');
+                    return;
+                }
 
                 let body = {};
                 let url = public_methods.api.companyInfo;
@@ -136,11 +149,11 @@
                 body["area"] = '';
                 body["areaCode"] = this.selectedCity[2];
 
-                this.axios.post(url,body)
+                this.axios.post(url, body)
                     .then(response => {
-                        let data= response.data;
+                        let data = response.data;
 
-                        if(data.errorCode === 0){
+                        if (data.errorCode === 0) {
                             this.showCompanyInfo = false;
                         }
                     })
@@ -148,36 +161,36 @@
                         reject(error)
                     });
             },
-            submitCompanyInfo(){
-                // if(this.companyFoundYears.length == 0){
-                //     this.toast('请选择您公司成立的年数');
-                //     return;
-                // }
-                // if(this.companyAnnualTax.length == 0){
-                //     this.toast('请选择公司税金');
-                //     return;
-                // }
-                // if(this.companyAnnualProfit.length == 0){
-                //     this.toast('请选择公司年利润');
-                //     return;
-                // }
-                // if(this.companyCreditScore == ''){
-                //     this.toast('请输入您的企业信用分');
-                //     return;
-                // }
+            submitCompanyInfo() {
+                if (this.companyFoundYears.length == 0) {
+                    this.toast('请选择您公司成立的年数');
+                    return;
+                }
+                if (this.companyAnnualTax.length == 0) {
+                    this.toast('请选择公司税金');
+                    return;
+                }
+                if (this.companyAnnualProfit.length == 0) {
+                    this.toast('请选择公司年利润');
+                    return;
+                }
+                if (this.companyCreditScore == '') {
+                    this.toast('请输入您的企业信用分');
+                    return;
+                }
 
                 let data = {};
                 data.companyFoundYears = this.companyFoundYears[0];
                 data.companyAnnualTax = this.companyAnnualTax[0];
                 data.companyAnnualProfit = this.companyAnnualProfit[0];
-                data.companyCreditScore = this.foundYears;
+                data.companyCreditScore = this.companyCreditScore;
                 data.userId = this.$store.state.userId;
                 let url = public_methods.api.companyOperate;
 
-                this.axios.post(url,data)
+                this.axios.post(url, data)
                     .then(response => {
-                        let data= response.data;
-                        if(data.errorCode === 0){
+                        let data = response.data;
+                        if (data.errorCode === 0) {
                             this.$router.push({
                                 name: 'credit'
                             });
@@ -186,6 +199,46 @@
                     .catch(error => {
                         reject(error)
                     });
+            },
+            getCompanyInfo() {
+                if(this.isLogin){
+                    this.axios.get(public_methods.api.getCompanyInfo)
+                        .then(res => {
+                            let data = res.data;
+                            if (data.errorCode == 0) {
+                                this.companyName = data.data.companyName;
+                                this.companySocialCreditCode = data.data.companySocialCreditCode;
+                                this.companyBusinessAddress = data.data.companyBusinessAddress;
+                                this.selectedCity.push(data.data.province + '');
+                                this.selectedCity.push(data.data.city + '');
+                                this.selectedCity.push(data.data.area + '');
+                            } else {
+                                this.toast(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                }
+            },
+            getCompanyOperate() {
+                if(this.isLogin){
+                    this.axios.get(public_methods.api.getCompanyOperate)
+                        .then(res => {
+                            let data = res.data;
+                            if (data.errorCode == 0) {
+                                this.companyCreditScore = data.data.companyCreditScore;
+                                this.companyFoundYears.push(data.data.companyFoundYears + '');
+                                this.companyAnnualTax.push(data.data.companyAnnualTax + '');
+                                this.companyAnnualProfit.push(data.data.companyAnnualProfit + '');
+                            } else {
+                                this.toast(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                }
             },
             toast(text) {
                 this.$vux.toast.show({

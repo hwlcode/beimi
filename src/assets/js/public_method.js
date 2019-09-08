@@ -1,17 +1,24 @@
 export let public_methods = {
     api: {
         loginVerifyCode: '/v1/api/sms/loginVerifyCode', // 登录验证码
-        registerVerifyCod: '/v1/api/sms/registerVerifyCode', //注册验证码
-        register: '/v1/api/user/loan/register', // 用户注册
-        processPerson: '/v1/api/register/process/person', // 补充用户信息
-        companyInfo: '/v1/api/register/process/companyInfo', // 企业基本信息
-        companyOperate: '/v1/api/register/process/companyOperate', // 企业补充信息
-        hasReview: '/v1/api/register/process/hasReview', // 是否测算过
         imageCode: '/v1/api/random/code', // 图形验证码
         login: '/v1/api/user/loan/login', // 登录
         logout: '/v1/api/user/loan/logout', // 登出
-        loan: '/v1/api/register/process/loan', // 获取注册用户贷款需求
+        registerVerifyCod: '/v1/api/sms/registerVerifyCode', //注册验证码
+        register: '/v1/api/user/loan/register', // 用户注册
+        loan: '/v1/api/register/process/loan', // 获取注册用户贷款需求和个人信息
+        processPerson: '/v1/api/register/process/person', // 补充用户信息
         getPersonInfo: '/v1/api/register/process/person', // 查询用户补全的信息
+
+        companyInfo: '/v1/api/register/process/companyInfo', // 企业基本信息
+        getCompanyInfo: '/v1/api/register/process/companyInfo', // 查询企业信息
+        companyOperate: '/v1/api/register/process/companyOperate', // 企业补充信息
+        getCompanyOperate: '/v1/api/register/process/companyOperate', // 查询企业补充信息
+
+        hasReview: '/v1/api/register/process/hasReview', // 是否测算过
+
+        companyReview: '/v1/api/register/process/free/review', // 查询企业的评审数据
+        companyReviewHistory: 'GET /v1/api/register/process/review/history', // 查询企业评审数据历史
     },
     url: {
         domain: 'http://tutuspaces.com:10880'

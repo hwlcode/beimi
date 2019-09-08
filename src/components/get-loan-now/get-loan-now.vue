@@ -3,7 +3,7 @@
         <div class="action">
             <h4>立即获取您的小企业贷款</h4>
             <div>
-                <input type="text" placeholder="￥你需要多少钱？" style="width: 230px;"><router-link to="/" class="common-small-bth" style="width: 85px;">开始</router-link>
+                <input type="text" placeholder="￥你需要多少钱？" style="width: 230px;" v-model="needMoney"><router-link :to="{ name: 'step'}" class="common-small-bth" style="width: 85px;" @click.native="setNeedMoney">开始</router-link>
             </div>
             <dl>
                 <dt>申请是免费的，不会影响您的信用</dt>
@@ -15,7 +15,17 @@
 
 <script type="text/ecmascript-6">
     export default {
-        name: "get-loan-now"
+        name: "get-loan-now",
+        data() {
+            return {
+                needMoney: ''
+            }
+        },
+        methods: {
+            setNeedMoney() {
+                this.$store.commit('SET_NEED_MONEY', this.needMoney || 0);
+            }
+        }
     };
 </script>
 

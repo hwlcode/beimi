@@ -109,7 +109,7 @@
 <script>
     import {XCircle, SwiperItem, Swiper} from 'vux'
     import service from '../../../components/service/service';
-    import {public_methods} from '../../../assets/js/public_method';
+    import {public_methods, toast} from '../../../assets/js/public_method';
 
     export default {
 
@@ -136,8 +136,9 @@
                     response => {
                         let data = response.data;
                         if (data.errorCode === 0) {
-                            // 存储token
                             this.show = false;
+                        }else{
+                            toast('您的资料己提交，请勿重复操作！');
                         }
                     })
                     .catch(error => {

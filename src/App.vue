@@ -86,7 +86,7 @@ export default {
             width:90% !important;
         }
     }
-
+    * { touch-action: pan-y; }
     .menu-night{
         .s-line{
             li{
