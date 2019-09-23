@@ -11,11 +11,16 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 
 Vue.use(VueAxios, axios);
+axios.defaults.baseURL = process.env.API_ROOT;
 // 给每个请求头加上token
 axios.defaults.headers.common['token'] = `${store.state.token}`;
 
 // 路由里面带有requireAuth选项，需要验证token是否存在，否则跳转到登录页面
 router.beforeEach((to, from, next) => {
+    // 处理jssdk签名,兼容history模式
+    if (!store.state.url) {
+        store.commit('SET_URL', document.URL);
+    }
     if (to.meta.requireAuth) {  // 判断该路由是否需要登录权限
         if (store.state.token) {  // 通过vuex state获取当前的token是否存在
             next();
@@ -165,7 +170,7 @@ require('es6-promise').polyfill()
 //     Vue.http.headers.common[key] = XAUTHObj[key];
 // };
 //
-window.baseUrl = '/page/api';
+// window.baseUrl = '/page/api';
 
 //每次请求之前设置一下请求头
 // Vue.http.options.before = function() {

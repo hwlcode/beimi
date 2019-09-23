@@ -18,7 +18,16 @@ export let public_methods = {
         hasReview: '/v1/api/register/process/hasReview', // 是否测算过
 
         companyReview: '/v1/api/register/process/free/review', // 查询企业的评审数据
-        companyReviewHistory: 'GET /v1/api/register/process/review/history', // 查询企业评审数据历史
+        companyReviewHistory: '/v1/api/register/process/review/history', // 查询企业评审数据历史
+
+        matchingProductList: '/v1/api/product/matchingProductList', // 信用卡匹配产品列表
+        productList: '/v1/api/product/productList', // 信用卡产品列表,
+
+        contactUs: '/v1/api/user/add/contactUs', // 联系我们
+        joinApplication: '/v1/api/user/add/joinApplication', // 申请加盟
+
+        agentRegister: '/v1/web/agent/register', // 个人代理注册
+        agentLogin: '/v1/web/agent/login', // 个人代理登录
     },
     url: {
         domain: 'http://tutuspaces.com:10880'
@@ -453,6 +462,7 @@ export let public_methods = {
         }
     }
 };
+
 export let toast = (text) => {
     this.$vux.toast.show({
         type: 'text',

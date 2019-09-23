@@ -2,20 +2,20 @@
     <div class="information-wrapper">
         <div class="user-info" v-show="showUserInfo">
             <group title="您的姓名" label-width="0" label-align="right">
-                <x-input title="" placeholder="请输入您的姓名" v-model="name" type="text" :disabled="!isLogin"></x-input>
+                <x-input title="" placeholder="请输入您的姓名" v-model="name" type="text" :disabled="isLogin"></x-input>
             </group>
             <group title="您的身份证号" label-width="0" label-align="right">
-                <x-input title="" placeholder="请输入您的身份证号" v-model="identityNumber" type="text" :disabled="!isLogin"></x-input>
+                <x-input title="" placeholder="请输入您的身份证号" v-model="identityNumber" type="text" :disabled="isLogin"></x-input>
             </group>
             <group title="您的电话" label-width="0" label-align="right">
-                <x-input title="" placeholder="请输入您的手机号码" v-model="phone" type="tel" :disabled="!isLogin"></x-input>
+                <x-input title="" placeholder="请输入您的手机号码" v-model="phone" type="tel" :disabled="isLogin"></x-input>
             </group>
             <group title="短信验证码" label-width="0" label-align="right" v-show="!isLogin">
                 <Flexbox>
                     <FlexboxItem>
                         <x-input title="" placeholder="请输入短信验证码" v-model="phoneCode" type="text"></x-input>
                     </FlexboxItem>
-                    <FlexboxItem :span="3">
+                    <FlexboxItem :span="4">
                         <x-button plain class="phone-code" @click.native="getPhoneCode" :disabled="disabled">
                             <span v-if="sending">获取验证码</span>
                                                         <span v-if="!sending">{{second}}秒后重发</span>                    
@@ -207,6 +207,7 @@
                             console.log(data.token);
                             this.$store.commit('LOGIN', data.data.token);
                             this.$store.commit('SET_USER_ID', data.data.id);
+                            this.$store.commit('SET_LOGIN_USER_PHONE', data.data.phone);
                             console.log(this.$store);
                             this.showUserInfo = false;
                         }else{
@@ -214,7 +215,7 @@
                         }
                     })
                     .catch(error => {
-                        reject(error)
+                        console.log(error)
                     });
             },
             submitMoreUserInfo(){
@@ -268,7 +269,7 @@
                         }
                     })
                     .catch(error => {
-                        reject(error)
+                        console.log(error)
                     });
             },
             getPhoneCode() {

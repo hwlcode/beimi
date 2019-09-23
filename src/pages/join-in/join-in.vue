@@ -6,10 +6,10 @@
             <div class="join-form">
                 <p class="title">告诉我有关特许经营机会的更多信息</p>
                 <group title="* 名字" label-width="0" label-align="right" class="form-item">
-                    <x-input title="" placeholder="" v-model="name"></x-input>
+                    <x-input title="" placeholder="" v-model="lastName"></x-input>
                 </group>
                 <group title="* 姓氏" label-width="0" label-align="right" class="form-item">
-                    <x-input title="" v-model="surname"></x-input>
+                    <x-input title="" v-model="firstName"></x-input>
                 </group>
                 <group title="* 邮箱" label-width="0" label-align="right" class="form-item">
                     <x-input title="" v-model="email"></x-input>
@@ -17,15 +17,15 @@
                 <group title="* 电话号码" label-width="0" label-align="right" class="form-item">
                     <x-input title="" v-model="phone"></x-input>
                 </group>
-                <group title="* 邮政编码" label-width="0" label-align="right" class="form-item">
-                    <x-input title="" v-model="zipCode"></x-input>
-                </group>
+                <!--                <group title="* 邮政编码" label-width="0" label-align="right" class="form-item">-->
+                <!--                    <x-input title="" v-model="zipCode"></x-input>-->
+                <!--                </group>-->
                 <group title="* 可用资金投资" label-width="0" label-align="right" class="form-item">
-                    <x-input title="" v-model="funds"></x-input>
+                    <x-input title="" v-model="investMoney"></x-input>
                 </group>
                 <p class="f-tips">或致电：<span class="blue-color">0755- 2301 1054</span> *必填字段</p>
                 <div class="btn-box">
-                    <x-button class="form-btn" type="default">提交我的请求</x-button>
+                    <x-button class="form-btn" type="default" @click.native="submit">提交我的请求</x-button>
                 </div>
             </div>
         </div>
@@ -93,19 +93,69 @@
     import header from '../../components/header';
     import getLoanNow from '../../components/get-loan-now/get-loan-now';
     import footerComponent from '../../components/footer/index';
+    import {public_methods} from '../../assets/js/public_method';
 
     export default {
         name: "join-in",
         data() {
             return {
-                name: '',
-                surname: '',
+                firstName: '',
+                lastName: '',
                 email: '',
                 phone: '',
-                zipCode: '',
-                funds: '',
+                // zipCode: '',
+                investMoney: '',
                 img1: require('./images/2.png'),
                 img2: require('./images/12.jpg')
+            }
+        },
+        methods: {
+            submit() {
+                if (this.lastName == '') {
+                    this.toast('请输入您的名字');
+                    return
+                }
+                if (this.firstName == '') {
+                    this.toast('请输入您的姓氏');
+                    return
+                }
+                if (this.email == '') {
+                    this.toast('请输入您的电子邮箱');
+                    return
+                }
+                if (this.phone == '') {
+                    this.toast('请输入您的电话号码');
+                    return
+                }
+                if (this.investMoney == '') {
+                    this.toast('请输入您的可用投资资金');
+                    return
+                }
+                let url = public_methods.api.joinApplication;
+                this.axios.post(url, {
+                    firstName: this.firstName,
+                    lastName: this.lastName,
+                    email: this.email,
+                    phone: this.phone,
+                    investMoney: this.investMoney
+                }).then(response => {
+                    let data = response.data;
+
+                    if (data.errorCode === 0) {
+                        this.toast('您的信息己提交，我们会尽快处理。')
+                    }
+                })
+                    .catch(error => {
+                        console.log(error)
+                    });
+            },
+            toast(text) {
+                this.$vux.toast.show({
+                    type: 'text',
+                    text: text,
+                    width: '80%',
+                    position: 'top'
+                });
             }
         },
         components: {
@@ -119,6 +169,7 @@
 <style lang="less" scoped>
     .join-in {
         margin-top: 50px;
+
         .join-in-form {
             background-image: url("images/1.jpg");
             background-position: top center;
@@ -350,25 +401,29 @@
             }
 
         }
-        .partner{
+
+        .partner {
             display: flex;
             background: #f7fafe;
             flex-wrap: wrap;
-            .partner-item{
+
+            .partner-item {
                 flex: 0 0 50%;
                 box-sizing: border-box;
                 height: 150px;
                 position: relative;
                 text-align: center;
-                span{
+
+                span {
                     display: block;
                     width: 140px;
                     margin: 10px auto;
                 }
-                &:after{
+
+                &:after {
                     position: absolute;
-                    left:0;
-                    top:0;
+                    left: 0;
+                    top: 0;
                     content: ".";
                     height: 100%;
                     width: 100%;
@@ -378,6 +433,7 @@
                     margin-right: -1px;
                     margin-bottom: -1px;
                 }
+
                 .icon {
                     background-position: top center;
                     background-size: cover;
@@ -404,18 +460,21 @@
                         height: 49px;
                         margin-top: 20px;
                     }
+
                     &.icon4 {
                         background-image: url("images/16.png");
                         width: 90px;
                         height: 18px;
                         margin-top: 53px;
                     }
+
                     &.icon5 {
                         background-image: url("images/17.png");
                         width: 80px;
                         height: 15px;
                         margin-top: 35px;
                     }
+
                     &.icon6 {
                         background-image: url("images/18.png");
                         width: 81px;

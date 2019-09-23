@@ -1,15 +1,22 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
+import wechatPlugin from 'vue-wechat-plugin'
+// 解决路由报NavigationDuplicated的问题
+const originalPush = Router.prototype.push;
+Router.prototype.push = function push(location) {
+    return originalPush.call(this, location).catch(err => err)
+};
 Vue.use(Router);
 
 const router = new Router({
-    routes: [{
-        path: '/',
-        name: 'index',
-        component: resolve => require(['pages/index'], resolve),
-        props: true
-    },
+    // mode: 'history',
+    routes: [
+        {
+            path: '/',
+            name: 'index',
+            component: resolve => require(['pages/index'], resolve),
+            props: true
+        },
         {
             path: '/login',
             name: 'login',
@@ -65,84 +72,91 @@ const router = new Router({
             props: true
         },
         {
+            path: '/agent/qr',
+            name: 'qr',
+            component: resolve => require(['pages/agent/qr/qr'], resolve),
+            props: true
+        },
+        {
+            path: '/agent/register',
+            name: 'register',
+            component: resolve => require(['pages/agent/register/register'], resolve),
+            props: true
+        },
+        {
             path: '/step',
             name: 'step',
             component: resolve => require(['pages/step'], resolve),
             props: true,
             redirect: '/step/demand',
-            children: [{
-                name: 'demand',
-                path: 'demand',
-                component: resolve => require(['pages/step/components/demand'], resolve)
-            }, {
-                name: 'information',
-                path: 'information',
-                // meta: {
-                //     requireAuth: true  // 添加该字段，表示进入这个路由是需要登录的
-                // },
-                component: resolve => require(['pages/step/components/information'], resolve)
-            }, {
-                name: 'company',
-                path: 'company',
-                meta: {
-                    requireAuth: true
+            children: [
+                {
+                    name: 'demand',
+                    path: 'demand',
+                    component: resolve => require(['pages/step/components/demand'], resolve)
                 },
-                component: resolve => require(['pages/step/components/company'], resolve)
-            }, {
-                name: 'credit',
-                path: 'credit',
-                meta: {
-                    requireAuth: true
+                {
+                    name: 'information',
+                    path: 'information',
+                    component: resolve => require(['pages/step/components/information'], resolve)
                 },
-                component: resolve => require(['pages/step/components/credit'], resolve)
-            }, {
-                name: 'loan',
-                path: 'loan',
-                meta: {
-                    requireAuth: true
+                {
+                    name: 'company',
+                    path: 'company',
+                    meta: {
+                        requireAuth: true // 添加该字段，表示进入这个路由是需要登录的
+                    },
+                    component: resolve => require(['pages/step/components/company'], resolve)
                 },
-                component: resolve => require(['pages/step/components/loan'], resolve)
-            }]
+                {
+                    name: 'credit',
+                    path: 'credit',
+                    meta: {
+                        requireAuth: true
+                    },
+                    component: resolve => require(['pages/step/components/credit'], resolve)
+                },
+                {
+                    name: 'loan',
+                    path: 'loan',
+                    meta: {
+                        requireAuth: true
+                    },
+                    component: resolve => require(['pages/step/components/loan'], resolve)
+                },
+                {
+                    name: 'pay',
+                    path: 'pay',
+                    component: resolve => require(['pages/step/components/pay'], resolve),
+                    beforeEnter: (to, from, next) => {
+                        let wxcode = getQueryString('code');
+                        if (wxcode == null) {
+                            let wxappid = 'wxe9cec454609e9fb9';
+                            let return_uri = encodeURIComponent('http://beimi.welcometo5g.cn/step/pay');
+                            let scope = 'snsapi_userinfo';
+                            let oauthUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize';
+                            let url = `${oauthUrl}?appid=${wxappid}&redirect_uri=${return_uri}&response_type=code&scope=${scope}&state=123#wechat_redirect`;
+
+                            window.location.href = url;
+                            console.log(to);
+                            next();
+                        }else{
+                            next();
+                        }
+                    }
+                },
+            ]
         }]
 
 });
 
-function getUrlParam(url) {
-    url = url || window.location.href;
-    var objRequest = new Object();
-    if (url.indexOf("?") != -1) {
-        url = url.split("?")[1];
-        var strArr = url.split("&");
-        for (var i = 0; i < strArr.length; i++) {
-            objRequest[strArr[i].split("=")[0]] = decodeURI((strArr[i].split("=")[1]));
-        }
-    }
-    return objRequest;
-}
 
-router.afterEach(route => {
-    //  setInterval(function() {
-    //      if (getUrlParam()) {
-    //          let query = getUrlParam()
-    //              //console.info(query)
-    //              //let str = query.slice(0, query.length - 2)
-    //              //let o = JSON.parse(str)
-    //              // localStorage.setItem('session_data', getQueryString('session_data'))
-    //          for (var i in query) {
-    //              if (query[i].indexOf('#/') > -1) {
-    //                  query[i] = query[i].replace(/#\//ig, '')
-    //              }
-    //              //console.info(121212, query[i])
-    //              localStorage.setItem(i, query[i])
-    //          }
-    //      }
-    //  }, 2000)
-})
 
 function getQueryString(name) {
-    var reg = new RegExp("(^|\\?|&)" + name + "=([^&]*)(\\s|&|$)", "i")
-    if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, " "))
-    return ""
+    let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    let r = window.location.search.substr(1).match(reg);
+    if (r != null) return decodeURI(r[2]);
+    return null;
 }
 
 export default router

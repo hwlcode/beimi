@@ -17,6 +17,11 @@
                       style="border-radius:99px; margin-top: 80px;">
                 下一步
             </x-button>
+
+            <x-button :gradients="['#546BE0', '#546BE0']" @click.native="testPay"
+                      style="border-radius:99px; margin-top: 80px;">
+                测试支付
+            </x-button>
         </div>
     </div>
 </template>
@@ -86,24 +91,21 @@
             }
         },
         created() {
-            let money = parseInt(this.$store.state.needMoney, 10);
-            if(money > 0 && money <= 1000){
-                this.moneyValue = 1;
-            }
-            else if(money > 1000 && money <= 5000){
-                this.moneyValue = 2;
-            }
-            else if(money > 5000 && money <= 10000){
-                this.moneyValue = 3;
-            }
-            else if(money > 10000 && money <= 20000){
-                this.moneyValue = 4;
-            }
-            else if(money > 20000 && money <= 50000){
-                this.moneyValue = 5;
-            }
-            else if(money > 50000){
-                this.moneyValue = 6;
+            if(!this.$store.state.isLogin) {
+                let money = parseInt(this.$store.state.needMoney, 10);
+                if (money > 0 && money <= 1000) {
+                    this.moneyValue = 1;
+                } else if (money > 1000 && money <= 5000) {
+                    this.moneyValue = 2;
+                } else if (money > 5000 && money <= 10000) {
+                    this.moneyValue = 3;
+                } else if (money > 10000 && money <= 20000) {
+                    this.moneyValue = 4;
+                } else if (money > 20000 && money <= 50000) {
+                    this.moneyValue = 5;
+                } else if (money > 50000) {
+                    this.moneyValue = 6;
+                }
             }
             this.getLoan();
         },
@@ -126,15 +128,21 @@
                     });
                 }
             },
+            testPay(){
+                this.$router.push({
+                    name: 'pay'
+                });
+            },
             getLoan() {
                 if(this.$store.state.isLogin){
                     this.axios.get(public_methods.api.loan)
                         .then(res => {
                             let data = res.data;
                             if (data.errorCode == 0) {
-                                this.moneyValue = data.data.moneyValue;
-                                this.aimValue = data.data.aimValue;
-                                this.disabled = true;
+                                this.moneyValue = parseInt(data.data.loanMoney, 10);
+                                this.aimValue = parseInt(data.data.loanAim, 10);
+                                // console.log(this.moneyValue, this.aimValue);
+                                // this.disabled = true;
                             } else {
                                 toast(data.message);
                             }

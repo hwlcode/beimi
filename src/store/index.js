@@ -15,7 +15,10 @@ export default new Vuex.Store({
         loginNum: 0,
         logoUrl: null,
         isLogin: false,
-        needMoney: 0
+        needMoney: 0,
+        companyName: null,
+        phone: null,
+        url: null,
     },
     getters: {},
     mutations: {
@@ -42,6 +45,15 @@ export default new Vuex.Store({
         },
         SET_NEED_MONEY(state, val){
             state.needMoney = val;
+        },
+        SET_COMPONY_NAME(state, val){
+            state.companyName = val;
+        },
+        SET_LOGIN_USER_PHONE(state, val){
+            state.phone = val;
+        },
+        SET_URL(state, val){
+            state.url = val;
         }
     },
     actions: {}

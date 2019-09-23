@@ -19,7 +19,7 @@
                           style="border-radius:99px;">下一步
                 </x-button>
             </div>
-            <v-service></v-service>
+<!--            <v-service></v-service>-->
         </div>
         <div class="more-company-info" v-show="!showCompanyInfo">
             <!-- company -->
@@ -40,7 +40,7 @@
                               value-text-align="left"></popup-picker>
             </group>
             <div class="tips-container">
-            <span class="tips">
+            <span class="tips" @click.stop="viewCreditPoints">
                 了解信用分&gt;
             </span>
                 <group title="企业信用分" label-width="0" label-align="right">
@@ -117,6 +117,14 @@
 
         },
         methods: {
+            viewCreditPoints(){
+                this.$router.push({
+                    name: 'credit',
+                    params: {
+                        companyCreditScore: this.companyCreditScore
+                    }
+                });
+            },
             submitInfo() {
                 if (this.companyName == '') {
                     this.toast('请选输入的公司名称');
@@ -155,10 +163,11 @@
 
                         if (data.errorCode === 0) {
                             this.showCompanyInfo = false;
+                            this.$store.commit('SET_COMPONY_NAME', this.companyName);
                         }
                     })
                     .catch(error => {
-                        reject(error)
+                        console.log(error)
                     });
             },
             submitCompanyInfo() {
@@ -174,10 +183,10 @@
                     this.toast('请选择公司年利润');
                     return;
                 }
-                if (this.companyCreditScore == '') {
-                    this.toast('请输入您的企业信用分');
-                    return;
-                }
+                // if (this.companyCreditScore == '') {
+                //     this.toast('请输入您的企业信用分');
+                //     return;
+                // }
 
                 let data = {};
                 data.companyFoundYears = this.companyFoundYears[0];
@@ -191,13 +200,17 @@
                     .then(response => {
                         let data = response.data;
                         if (data.errorCode === 0) {
+                            // console.log(this.companyCreditScore);
                             this.$router.push({
-                                name: 'credit'
+                                name: 'credit',
+                                params: {
+                                    companyCreditScore: this.companyCreditScore || 0
+                                }
                             });
                         }
                     })
                     .catch(error => {
-                        reject(error)
+                        console.log(error)
                     });
             },
             getCompanyInfo() {
@@ -209,9 +222,9 @@
                                 this.companyName = data.data.companyName;
                                 this.companySocialCreditCode = data.data.companySocialCreditCode;
                                 this.companyBusinessAddress = data.data.companyBusinessAddress;
-                                this.selectedCity.push(data.data.province + '');
-                                this.selectedCity.push(data.data.city + '');
-                                this.selectedCity.push(data.data.area + '');
+                                this.selectedCity.push(data.data.provinceCode + '');
+                                this.selectedCity.push(data.data.cityCode + '');
+                                this.selectedCity.push(data.data.areaCode + '');
                             } else {
                                 this.toast(data.message);
                             }

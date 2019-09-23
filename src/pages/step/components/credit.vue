@@ -1,5 +1,6 @@
 <template>
     <div class="credit">
+        <div v-if="!showReport" style="padding-top: 15px;">
         <div class="get-score" v-show="show">
             <div class="score">
                 <div class="score-box">
@@ -10,11 +11,12 @@
                         <span>{{ percent }}%</span>
                     </x-circle>
                     <div class="show-score">
-                        <span>未获取<br/>信用分</span>
+                        <span style="font-size: 45px;" v-if="companyCreditScore > 0">{{companyCreditScore}}分</span>
+                        <span v-if="companyCreditScore == 0">未获取<br/>信用分</span>
                     </div>
                 </div>
                 <div class="btn-box">
-                    <x-button class="consulting">咨询客服</x-button>
+                    <div style="flex: 0 0 50%; text-align: center;"><a href="tel:0755-85245354" class="consulting">咨询客服</a></div>
                     <x-button class="v-text" @click.native="beginTest">开始测试</x-button>
                 </div>
             </div>
@@ -30,7 +32,7 @@
             <!--                <div class="banner-item"><img :src="banner" alt=""></div>-->
             <!--            </div>-->
             <!--        </div>-->
-            <v-service :s-bottom="40"></v-service>
+<!--            <v-service :s-bottom="40"></v-service>-->
         </div>
         <div class="test-score" v-show="!show">
             <div class="score-body">
@@ -100,8 +102,24 @@
                               style="border-radius:99px;">确认支付
                     </x-button>
                 </div>
-                <v-service :s-bottom="40"></v-service>
+<!--                <v-service :s-bottom="40"></v-service>-->
             </div>
+        </div>
+        </div>
+        <div v-if="showReport" class="pdf">
+            <p class="arrow">
+                <span @click="changePdfPage(0)" class="turn" :class="{grey: currentPage==1}"><x-icon type="ios-arrow-back" size="30"></x-icon></span>
+                <span>{{currentPage}}/{{pageCount}}</span>
+                <a :href="pdfSrc" class="download" :download="downloadName">下载</a>
+                <span @click="changePdfPage(1)" class="turn" :class="{grey: currentPage==pageCount}"><x-icon type="ios-arrow-forward" size="30"></x-icon></span>
+            </p>
+            <pdf
+                :src="pdfSrc"
+            :page="currentPage"
+            @num-pages="pageCount=$event"
+            @page-loaded="currentPage=$event"
+            @loaded="loadPdfHandler">
+            </pdf>
         </div>
     </div>
 </template>
@@ -110,6 +128,7 @@
     import {XCircle, SwiperItem, Swiper} from 'vux'
     import service from '../../../components/service/service';
     import {public_methods, toast} from '../../../assets/js/public_method';
+    import pdf from 'vue-pdf'
 
     export default {
 
@@ -120,49 +139,105 @@
                 banner2: require('../images/2.png'),
                 banner3: require('../images/3.png'),
                 percent: 60,
-                show: true
+                show: true,
+                companyCreditScore: 0,
+                showReport: false,
+                pdfSrc: '',
+                downloadName: '',
+
+                currentPage: 0, // pdf文件页码
+                pageCount: 0, // pdf文件总页数
             }
         },
         created() {
-
+            this.hasReview(); // 是否测算过
+            this.companyCreditScore = this.$route.params.companyCreditScore;
+            this.show = true;
         },
         mounted() {
 
         },
         methods: {
+            changePdfPage (val) {
+                if (val === 0 && this.currentPage > 1) {
+                    this.currentPage--
+                }
+                if (val === 1 && this.currentPage < this.pageCount) {
+                    this.currentPage++
+                }
+            },
+            // pdf加载时
+            loadPdfHandler () {
+                this.currentPage = 1 // 加载的时候先加载第一页
+            },
             beginTest() {
-                console.log(public_methods.api.hasReview);
+                this.show = false;
+            },
+            hasReview(){
                 this.axios.get(public_methods.api.hasReview).then(
                     response => {
                         let data = response.data;
-                        if (data.errorCode === 0) {
-                            this.show = false;
+                        if (data.data) {
+                            this.showReport  = true;
+                            this.getCompanyReviewHistory();
                         }else{
-                            toast('您的资料己提交，请勿重复操作！');
+                            this.showReport  = false;
                         }
                     })
                     .catch(error => {
-                        reject(error)
+                        console.log(error)
                     });
             },
             pay(){
                 this.$router.push({
                     name: 'loan'
                 });
+            },
+            // getCompanyReview() {
+            //     // let companyName = this.$store.state.companyName;
+            //     let companyName = '测试';
+            //     this.axios.get(public_methods.api.companyReview+'?type=1' + '&companyName='+companyName).then(
+            //         response => {
+            //             let data = response.data;
+            //             console.log(data);
+            //             if (data.errorCode === 0) {
+            //                 // this.show = false;
+            //             }else{
+            //                 toast('');
+            //             }
+            //         })
+            //         .catch(error => {
+            //             console.log(error)
+            //         });
+            // },
+            getCompanyReviewHistory() {
+                this.axios.get(public_methods.api.companyReviewHistory).then(
+                    response => {
+                        let data = response.data;
+                        console.log(data);
+                        if (data.errorCode === 0) {
+                            let evaluationContent = data.data[0]['evaluationContent'];
+                            this.pdfSrc = evaluationContent.replace(/^http:\/\/[a-z]+\.[a-z]{2,3}:\d+/gi, '');
+                            this.downloadName = evaluationContent.replace(/^http:\/\/[a-z]+\.[a-z]{2,3}:\d+\/[a-z]+\//gi, '');
+                        }else{
+                            toast(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    });
             }
         },
         components: {
             XCircle, SwiperItem, Swiper,
-            'v-service': service
+            'v-service': service,
+            pdf
         }
     }
 </script>
 
 <style lang="less" scoped>
     .credit {
-
-        padding-top: 15px;
-
         .score {
             background: #fff;
             margin: 0px 15px 40px 15px;
@@ -214,6 +289,7 @@
                 .consulting {
                     width: 135px;
                     height: 50px;
+                    display: inline-block; line-height: 39px;
                     background: rgba(205, 212, 255, 1);
                     border: 5px solid rgba(245, 245, 245, 1);
                     border-radius: 20px;
@@ -338,6 +414,26 @@
             margin: 0 10px;
             .title{ font-size: 16px; border-bottom: 1px #E5E5E5 solid; padding: 10px 0;}
             .pay-item{border-bottom: 1px #E5E5E5 solid; font-size: 13px; padding: 10px 0;}
+        }
+        .pdf{
+            .arrow{
+                font-size: 13px;
+                background: #f1f1f1;
+                display: flex;
+                line-height: 30px;
+                justify-content: space-between;
+                padding: 10px 10px 0 10px;
+                color: #333;
+                .download{
+                    border: 1px #999 solid; display: inline-block; padding: 0px 20px; border-radius: 20px; height: 30px;
+                }
+                .turn{
+
+                }
+                .vux-x-icon {
+                    fill: #999;
+                }
+            }
         }
     }
 </style>

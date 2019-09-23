@@ -7,7 +7,7 @@
                 <h4>大数据匹配 方案定制 快速获得资金</h4>
                 <div>
                     <input type="text" placeholder="￥您需要多少钱？" v-model="needMoney">
-                    <router-link :to="{path: '/step'}" class="common-small-bth" @click.native="setNeedMoney">获取方案</router-link>
+                    <a class="common-small-bth need-money-btn" @click.stop="checkLogin">获取方案</a>
                 </div>
             </div>
         </div>
@@ -21,7 +21,7 @@
                 <dt></dt>
                 <dd><h4 class="common-title">成功</h4>只需24小时即可获得所需资金<br>这样您就可以重新开展业务。</dd>
             </dl>
-            <router-link to="/step" class="common-small-bth">看看你是否符合资格</router-link>
+            <a class="common-small-bth" @click.stop="checkLogin">看看你是否符合资格</a>
         </div>
 
         <div class="info">
@@ -31,14 +31,14 @@
                 <dd>我们帮助像你这样的小企业主获得超过14亿的贷款。<br>这意味着我们必须持续提高自己的贷款匹配能力。</dd>
                 <dd><img :src="img1"></dd>
                 <dd>
-                    <router-link to="/contact-us" class="common-small-bth w200">比较贷方</router-link>
+                    <a class="common-small-bth" @click.stop="checkLogin">比较贷方</a>
                 </dd>
                 <dt>获得快速资助</dt>
                 <dd class="mb10">时间紧迫？您只需15分钟即可填写我们的在线申请表<br>这比你在当地咖啡馆买拿铁咖啡要快</dd>
                 <dd>资金极速到账 - 您可以在批准后24小时内获得现金</dd>
                 <dd><img :src="img2"></dd>
                 <dd>
-                    <router-link to="/step" class="common-small-bth w200">开始吧</router-link>
+                    <a class="common-small-bth" @click.stop="checkLogin">开始吧</a>
                 </dd>
             </dl>
         </div>
@@ -59,7 +59,8 @@
             return {
                 img1: require('./images/5.png'),
                 img2: require('./images/6.png'),
-                needMoney: ''
+                needMoney: '',
+                isLogin: this.$store.state.isLogin
             }
         },
         mounted() {
@@ -68,6 +69,13 @@
         methods: {
             setNeedMoney() {
                 this.$store.commit('SET_NEED_MONEY', this.needMoney || 0);
+            },
+            checkLogin(){
+                if(this.isLogin){
+                    this.$router.push('/step');
+                }else{
+                    this.$router.push('/login');
+                }
             }
         },
         components: {
@@ -90,40 +98,39 @@
 
         .top {
             background: url(images/bg.png) repeat-x 0 0;
-            height: 200px;
 
             & > .a {
-                height: 161px;
                 padding: 15px;
-                // padding-top: 12px;
-                background: url(images/1.png) no-repeat right 12px;
-                background-size: 133px 161px;
                 position: relative;
 
                 h3 {
-                    font-size: 23px;
+                    font-size: 48px;
                     font-weight: 400;
                     color: #000;
-                    width: 200px;
-                    line-height: 30px;
+                    width: 285px;
+                    line-height: 58px;
                 }
 
                 h4 {
-                    font-size: 12px;
+                    font-size: 20px;
                     color: rgba(95, 99, 125, 1);
-                    padding-top: 15px;
+                    margin: 35px 0;
                 }
 
                 & > div {
-                    padding-top: 25px;
-
+                    .need-money-btn{
+                        margin: 10px auto 80px auto; display: block;
+                        height: 45px; line-height: 45px; font-size: 16px;
+                        border-radius: 45px;
+                        width: 100%;
+                    }
                     input {
-                        width: 130px;
-                        height: 27px;
+                        width: 100%;
+                        height: 45px;
                         background: rgba(255, 255, 255, 0.2);
-                        border: 1px solid rgba(160, 160, 160, 1);
-                        border-radius: 13px;
-                        line-height: 27px;
+                        border: 1px solid #5369E8;
+                        border-radius: 45px;
+                        line-height: 45px;
                         padding: 0 10px;
                         font-size: 13px;
                     }
@@ -133,8 +140,7 @@
 
         .list {
             background: rgba(247, 250, 254, 1);
-            text-align: center;
-            padding: 25px 0;
+            padding: 25px 20px 25px 20px;
 
             dl {
                 dt {
@@ -142,7 +148,7 @@
                     padding: 7px;
                     background-size: 45px 45px;
                     background-repeat: no-repeat;
-                    background-position: center center;
+                    background-position: left center;
 
                     &:nth-of-type(1) {
                         background-image: url(images/2.png);
@@ -160,11 +166,14 @@
                 dd {
                     h4 {
                         padding: 10px 0;
+                        font-size: 23px;
+                        margin: 15px 0;
                     }
 
-                    font-size: 12px;
+                    font-size: 17px;
                     color: rgba(95, 99, 125, 1);
-                    line-height: 18px;
+                    line-height: 25px;
+                    margin-bottom: 25px;
                 }
             }
 

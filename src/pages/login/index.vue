@@ -118,6 +118,7 @@
                             // 存储token
                             this.$store.commit('LOGIN', data.data.token);
                             this.$store.commit('SET_USER_ID', data.data.id);
+                            this.$store.commit('SET_LOGIN_USER_PHONE', data.data.phone);
                             // console.log(this.$store);
                             this.$router.push({
                                 path: '/'
@@ -127,7 +128,7 @@
                         }
                     })
                     .catch(error => {
-                        reject(error)
+                        console.log(error)
                     });
             },
             toast(text) {

@@ -10,7 +10,7 @@
                 <div class="right">
                     <p>让我们开始吧</p>
                     <input type="text" placeholder="￥你需要多少钱？" class="money">
-                    <router-link to="/" class="common-small-bth">查看你的选择</router-link>
+                    <a class="common-small-bth" @click.stop="checkLogin">查看你的选择</a>
                 </div>
             </div>
             <div class="cate">
@@ -43,7 +43,7 @@
                     当时间就是金钱时，短期贷款可以在短短24小时内获得融资。
                 </p>
                 <div class="btn-box">
-                <x-button class="btn" style="width: 200px;">查看你的选择</x-button>
+                <a class="btn" style="width: 200px;" @click.stop="checkLogin">查看你的选择</a>
                 </div>
                 <div class="banner-box">
                     <img :src="img1" alt="">
@@ -53,7 +53,7 @@
                 <h2>探索这些领先贷方的小企业贷款选择</h2>
                 <div class="banner-box"><img :src="img2" alt=""></div>
                 <div class="btn-box">
-                    <x-button class="btn" style="width: 200px;">搜索贷方</x-button>
+                    <a class="btn" style="width: 200px;" @click.stop="checkLogin">搜索贷方</a>
                 </div>
             </div>
             <div class="list">
@@ -109,12 +109,22 @@
             return{
                 img1: require('./iamges/5.jpg'),
                 img2:require('./iamges/9.jpg'),
+                isLogin: this.$store.state.isLogin
             }
         },
         components: {
             'v-header': headerComponent,
             'v-footer': footerComponent,
             'get-loan-now': getLoanNow
+        },
+        methods: {
+            checkLogin(){
+                if(this.isLogin){
+                    this.$router.push('/step');
+                }else{
+                    this.$router.push('/login');
+                }
+            }
         }
     };
 </script>

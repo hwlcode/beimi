@@ -16,9 +16,29 @@ module.exports = {
                 pathRewrite: {
                     '^/v1/api': '/v1/api'
                 }
+            },
+            '/download': {
+                target: 'http://tutuspaces.com:10860',
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/download': '/download'
+                }
+            },
+            // '/v1/web': {
+            //     target: 'http://tutuspaces.com:10860',
+            //     changeOrigin: true,
+            //     pathRewrite: {
+            //         '^/v1/web': '/vi/web'
+            //     }
+            // },
+            '/api/pay': {
+                target: 'http://localhost:5271',
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/api/pay': '/api/pay'
+                }
             }
         },
-
         // Various Dev Server settings
         host: 'localhost', // can be overwritten by process.env.HOST
         port: 8888, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
@@ -26,7 +46,6 @@ module.exports = {
         errorOverlay: true,
         notifyOnErrors: true,
         poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
-
 
         /**
          * Source Maps

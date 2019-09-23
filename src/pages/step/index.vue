@@ -37,9 +37,9 @@
             }
         },
         created() {
-            if (this.step === 0) {
-                this.handleSwitchComponent(this.list[0].value)
-            }
+            // if (this.step === 0) {
+            //     this.handleSwitchComponent(this.list[0].value)
+            // }
         },
         watch: {
             $route(to, from) {

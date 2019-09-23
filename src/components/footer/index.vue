@@ -2,14 +2,15 @@
     <div class="footer-wrapper">
         <div class="footer">
             <dl>
-                <dt>0755 - 8524 5354</dt>
+                <dt><a href="tel:0755-85245354">0755 - 8524 5354</a></dt>
                 <dd>周一至周五| 上午9点至晚上9点</dd>
             </dl>
             <ul>
-                <li></li>
-                <li></li>
-                <li></li>
+                <li @click.stop="showQr"></li>
+                <li><a href="https://www.toutiao.com/c/user/111623788449/#mid=1626047715435533"></a></li>
+                <li><a href="https://weibo.com/u/7003508369"></a></li>
             </ul>
+            <div class="qrcode" v-show="show"><img :src="qrcode" alt=""></div>
             <div class="link">
                 <router-link to="/contact-us">联系我们</router-link>
                 <span>/</span>
@@ -35,12 +36,19 @@
     export default {
         name: 'footerComponent',
         data() {
-            return {}
+            return {
+                qrcode: require('./images/gongzhonghao.jpg'),
+                show: false
+            }
         },
         mounted() {
 
         },
-        methods: {}
+        methods: {
+            showQr() {
+                this.show = !this.show;
+            }
+        }
     }
 </script>
 
@@ -87,10 +95,12 @@
                 }
                 &:nth-child(2){
                     background-image: url(images/9.png);
+                    a{display: inline-block; width: 100%; height: 100%;}
                 }
                 &:nth-child(3){
                     background-image: url(images/10.png);
                     margin-right: 0;
+                    a{display: inline-block; width: 100%; height: 100%;}
                 }
             }
         }
@@ -102,6 +112,19 @@
             color: rgba(50, 50, 50, 1);
             & > span{
                 margin: 0 20px;
+            }
+        }
+        .qrcode{
+            background: #fff;
+            padding: 10px;
+            border-radius: 2px;
+            width: 100px; height: 100px;
+            position: absolute;
+            right: 71px;
+            bottom: 102px;
+            box-shadow:0px 0px 3px 0px rgba(0, 0, 0, 0.2);
+            img{
+                width: 100%;
             }
         }
     }

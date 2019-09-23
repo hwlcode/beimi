@@ -6,9 +6,9 @@
                 <div>
                     <div v-show="!isLogin"
                          style="display: inline-block; position: absolute;right: 36px; top: 50%; margin-top: -13px; width: 60px; font-size: 13px;">
-                        <router-link to="/login" class="common-small-bth" v-show="showLogin">登录</router-link>
+                        <router-link to="/login" class="common-small-bth logout" v-show="showLogin">登录</router-link>
                     </div>
-                    <x-button class="common-small-bth logout" v-show="isLogin" @click.native="logout">退出</x-button>
+                    <x-button class="common-small-bth logout" v-show="isLogin" @click.native="logout" style="right: 40px; margin-top: 0;">退出</x-button>
                     <span class="menu" @click="showMenuEvent()"></span>
                 </div>
             </div>
@@ -43,13 +43,38 @@
                     </dl>
                     <dl class="menu-item">
                         <dt>
-                            <router-link to="/login" @click.native="move()">登录</router-link>
+                            <router-link to="/questions" @click.native="move()">常见问题</router-link>
                         </dt>
                         <dd><i class="icon"></i></dd>
                     </dl>
                     <dl class="menu-item">
                         <dt>
-                            <router-link to="/" @click.native="move()">代理登录</router-link>
+                            <router-link to="/login" @click.native="move()" v-show="!isLogin">登录</router-link>
+                            <p v-show="isLogin">欢迎您，{{loginUserPhone}} <a href="javascript:;" @click.stop="logout" style="font-weight: 700;">退出</a></p>
+                        </dt>
+                        <dd><i class="icon"></i></dd>
+                    </dl>
+                    <dl class="menu-item">
+                        <dt>
+                            <router-link to="/login" @click.native="move()">代理登录</router-link>
+                        </dt>
+                        <dd><i class="icon"></i></dd>
+                    </dl>
+                    <dl class="menu-item">
+                        <dt>
+                            <router-link to="/login" @click.native="move()">获取贷款优惠</router-link>
+                        </dt>
+                        <dd><i class="icon"></i></dd>
+                    </dl>
+                    <dl class="menu-item">
+                        <dt>
+                            <router-link to="/agent/qr" @click.native="move()">个代测试</router-link>
+                        </dt>
+                        <dd><i class="icon"></i></dd>
+                    </dl>
+                    <dl class="menu-item">
+                        <dt>
+                            <router-link to="/step/pay" @click.native="move()">支付测试</router-link>
                         </dt>
                         <dd><i class="icon"></i></dd>
                     </dl>
@@ -73,7 +98,8 @@
         data() {
             return {
                 showMenu: false,
-                isLogin: this.$store.state.isLogin
+                isLogin: this.$store.state.isLogin,
+                loginUserPhone: this.$store.state.phone,
             }
         },
         mounted() {
@@ -106,8 +132,10 @@
                             this.$store.commit('LOGOUT');
                             this.isLogin = false;
                             this.toast('您的帐号退出成功！');
+                            this.showMenu = false;
                             console.log(this.$store);
                         } else {
+                            this.showMenu = false;
                             this.toast(data.message);
                         }
                     })
@@ -195,10 +223,12 @@
 
                     .logout {
                         position: absolute;
-                        right: 50px;
-                        top: 50%;
+                        right: 4px;
+                        top: 12px;
                         margin-top: -13px;
-                        width: 46px;
+                        width: 60px;
+                        height: 27px;
+                        line-height: 27px;
                         font-size: 13px;
                     }
 
@@ -238,7 +268,7 @@
                     padding-top: 150px;
 
                     dl {
-                        margin-bottom: 80px;
+                        margin-bottom: 45px;
                         display: flex;
                     }
 

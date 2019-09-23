@@ -46,7 +46,7 @@
                 <img :src="img3" alt="">
             </div>
             <div class="btn-box">
-                <router-link to="/contact-us" class="common-small-bth w200">比较贷方</router-link>
+                <a class="common-small-bth w200" @click.stop="checkLogin">比较贷方</a>
             </div>
         </div>
         <div class="job">
@@ -95,7 +95,17 @@
                 banner: require('./images/4.jpg'),
                 img3: require('./images/5.jpg'),
                 img4: require('./images/6.jpg'),
-                img5: require('./images/3.jpg')
+                img5: require('./images/3.jpg'),
+                isLogin: this.$store.state.isLogin
+            }
+        },
+        methods: {
+            checkLogin(){
+                if(this.isLogin){
+                    this.$router.push('/step');
+                }else{
+                    this.$router.push('/login');
+                }
             }
         },
         components: {

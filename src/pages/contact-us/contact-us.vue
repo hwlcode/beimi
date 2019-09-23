@@ -18,14 +18,28 @@
                     <x-input title="" placeholder="" v-model="email"></x-input>
                 </group>
                 <group title="* 我们能帮到你什么?" label-width="0" label-align="right" class="form-item">
-                    <x-input title="" placeholder="" v-model="question"></x-input>
+                    <x-input title="" placeholder="" v-model="helpContent"></x-input>
                 </group>
                 <group title="* 您的问题或评论" label-width="0" label-align="right" class="form-item">
-                    <x-input title="" placeholder="" v-model="commit"></x-input>
+                    <x-input title="" placeholder="" v-model="question"></x-input>
                 </group>
-                <x-button type="default" class="form-btn">比较贷方</x-button>
+                <x-button type="default" class="form-btn" @click.native="commitForm">比较贷方</x-button>
                 <div class="map">
-                    <img :src="img1" alt="">
+                    <baidu-map class="bai-map" ak="zvWg6ieHbzdajEfFnki4ObZCtjCXGDUs" :center="{lng: 116.404, lat: 39.915}" :zoom="15">
+                    </baidu-map>
+                    <div class="contact-s">
+                        <ul>
+                            <li><i class="icon icon-1"></i>188 8888 8888</li>
+                            <li><i class="icon icon-1"></i>188 6666 6666</li>
+                            <li>
+                                <i class="icon icon-1"></i>0755- 2301 1054
+                                <p class="work">周一至周五| 上午9点至晚上9点</p>
+                            </li>
+                            <li><i class="icon icon-1"></i>
+                                <p class="address">这里放公司地址信息这里放公司地址信息这里放
+                                公司地址信息</p></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -36,6 +50,8 @@
 <script type="text/ecmascript-6">
     import header from '../../components/header';
     import footerComponent from '../../components/footer/index';
+    import {public_methods} from '../../assets/js/public_method';
+    import BaiduMap from 'vue-baidu-map/components/map/Map.vue';
 
     export default {
         name: "contact-us",
@@ -46,13 +62,59 @@
                 wechat: '',
                 email: '',
                 question: '',
-                commit: '',
-                img1: require('./images/2.jpg')
+                helpContent: '',
+            }
+        },
+        methods: {
+            commitForm() {
+                if (this.name == '') {
+                    this.toast('请输入您的全名');
+                    return
+                }
+                if (this.phone == '') {
+                    this.toast('请输入您的手机号码');
+                    return
+                }
+                if (this.helpContent == '') {
+                    this.toast('请输入我们能帮到的内容');
+                    return
+                }
+                if (this.question == '') {
+                    this.toast('请输入您的问题或全名');
+                    return
+                }
+                let url = public_methods.api.contactUs;
+                this.axios.post(url, {
+                    name: this.name,
+                    phone: this.phone,
+                    wechat: this.wechat,
+                    email: this.email,
+                    helpContent: this.helpContent,
+                    question: this.question
+                }).then(response => {
+                        let data = response.data;
+
+                        if (data.errorCode === 0) {
+                            this.toast('您的信息己提交，我们会尽快处理。')
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    });
+            },
+            toast(text) {
+                this.$vux.toast.show({
+                    type: 'text',
+                    text: text,
+                    width: '80%',
+                    position: 'top'
+                });
             }
         },
         components: {
             'v-header': header,
-            'v-footer': footerComponent
+            'v-footer': footerComponent,
+            BaiduMap
         }
     };
 </script>
@@ -61,6 +123,7 @@
     .contact-us {
         background: #f1f4fd;
         margin-top: 50px;
+
         .c-form {
             background-image: url("images/1.jpg");
             background-position: top center;
@@ -97,8 +160,43 @@
 
             .map {
                 margin-bottom: 10px;
-                img {
-                    width: 100%;
+                .bai-map{ height: 200px; width: 100%;}
+            }
+        }
+        .contact-s{
+            background: #5369E8;
+            padding: 40px 100px 40px 40px;
+            color: #fff;
+            ul {
+                li {
+                    font-size: 16px; font-weight: 700; padding: 10px 0; border-bottom: 1px #667CFD dashed;
+                    p{
+                        font-size: 7px;
+                        text-align: left;
+                        margin-bottom: 0;
+                        &.work{
+                            font-size: 6px; color:#B8C2FF;
+                        }
+                        &.address{ display: inline;}
+                    }
+                    &:last-child{ border: 0;}
+                    .icon{
+                        display: inline-block; width: 17px; height: 17px;
+                        background-size: contain; background-repeat: no-repeat;
+                        margin-right: 5px; vertical-align: middle; margin-top: -4px;
+                        &.icon-1{
+                            background-image: url("./images/icon-1.png");
+                        }
+                        &.icon-2{
+                            background-image: url("./images/icon-2.png");
+                        }
+                        &.icon-3{
+                            background-image: url("./images/icon-3.png");
+                        }
+                        &.icon-4{
+                            background-image: url("./images/icon-4.png");
+                        }
+                    }
                 }
             }
         }
