@@ -159,7 +159,8 @@
                 agreementIt: false,
                 code: null,
                 openId: null,
-                payMoney: 0.01
+                payMoney: 0.01,  // 正式的时候需要修改
+                out_trade_no: `BM${ new Date().getTime() }` // 正式的时候需要修改
             }
         },
         watch: {
@@ -176,6 +177,7 @@
             this.companyCreditScore = this.$route.params.companyCreditScore || 0;
         },
         mounted() {
+            console.log(window.location.href);
             // 获取code方法只有在mounted里面可以获取
             if (window.location.href.indexOf('code') != -1) {
                 this.code = this.getQueryString('code');
@@ -185,6 +187,35 @@
                     this.currentTabPage = 2;
                     this.$store.commit('SET_CURRENT_TAB_PAGE', 2);
                 }
+            }
+            // h5支付成功，查询订单
+            if(window.location.href.indexOf('wxback') != -1){
+                let self = this;
+                this.currentTabPage = 2;
+                this.$store.commit('SET_CURRENT_TAB_PAGE', 2);
+
+                this.$vux.confirm.show({
+                    title: '确认支付结果',
+                    'confirm-text': '己完成支付',
+                    'cancel-text': '支付遇到问题',
+                    onCancel : () => {
+                        self.$vux.confirm.hide();
+                    },
+                    onConfirm : () => {
+                        self.axios.get('/api/pay/wx_pay/orderQuery?out_trade_no='+ this.out_trade_no)
+                            .then(data => {
+                                console.log(data);
+                                if(data.data.code == 200){
+                                    self.$router.push({
+                                        name: 'loan'
+                                    });
+                                }else{
+                                    self.toast(data.data.msg);
+                                }
+                                self.$vux.confirm.hide();
+                            })
+                    }
+                });
             }
         },
         methods: {
@@ -228,37 +259,15 @@
                 }
             },
             h5pay() {
-                let self = this;
-                let attach = '充值'; // 标题
-                let body = '充值-' + this.payMoney; // 描述
+                let attach = '咨询服务费'; // 标题
+                let body = '咨询服务费-' + this.payMoney; // 描述
                 let total_fee = this.payMoney;
-                let out_trade_no = '';
-                let redirect_url = 'http://beimi.welcometo5g.cn/#/step/credit?wxback=true';
-                this.axios.get(`/api/pay/wx_pay/create_h5_pay?attach=${attach}&body=${body}&total_fee=${total_fee}&out_trade_no=${out_trade_no}&redirect_url=${redirect_url}`).then(
+                let out_trade_no = this.out_trade_no;
+                let redirect_url = encodeURIComponent('http://beimi.welcometo5g.cn/#/step/credit?wxback=true');
+                this.axios.get(`/api/pay/wx_pay/create_h5_pay?attach=${attach}&body=${body}&total_fee=${total_fee}&out_trade_no=${out_trade_no}`).then(
                     res => {
                         let data = res.data;
-                        this.$vux.confirm.show({
-                            title: '确认支付结果',
-                            'confirm-text': '己完成支付',
-                            'cancel-text': '支付遇到问题',
-                            onCancel : () => {
-                                console.log(this) //当前 vm
-                                this.$vux.confirm.hide();
-                            },
-                            onConfirm : () => {
-                                self.axios.get('/api/pay/wx_pay/orderQuery?out_trade_no='+out_trade_no)
-                                    .then(data => {
-                                        console.log(data);
-                                        if(data.data.code == 200){
-                                            console.log('success');
-                                        }else{
-                                            console.log('fail');
-                                        }
-                                        this.$vux.confirm.hide();
-                                    })
-                            }
-                        });
-                        window.location.href = data['mweb_url'][0];
+                        window.location.href = data['mweb_url'][0] + `&redirect_url=${redirect_url}`;
                     }
                 )
             },
@@ -271,22 +280,43 @@
                 )
             },
             payOurMoney() {
+                let self = this;
                 let openid = this.openId;
-                let attach = '充值'; // 标题
-                let body = '充值-' + this.payMoney; // 描述
+                let attach = '咨询服务费'; // 标题
+                let body = '咨询服务费-' + this.payMoney; // 描述
                 let total_fee = this.payMoney;
-                let out_trade_no = '';
+                let out_trade_no = this.out_trade_no;
 
                 this.axios.get('/api/pay/wx_pay/order?openid=' + openid + '&attach=' + attach + '&body=' + body + '&total_fee=' + total_fee+'&out_trade_no=' + out_trade_no).then(
                     res => {
                         let data = res.data;
                         new wexinPay(data).then((data) => {
-                            console.log(data);
-                            this.$router.push({
-                                name: 'loan'
+                            this.$vux.confirm.show({
+                                title: '确认支付结果',
+                                'confirm-text': '己完成支付',
+                                'cancel-text': '支付遇到问题',
+                                onCancel : () => {
+                                    self.$vux.confirm.hide();
+                                },
+                                onConfirm : () => {
+                                    self.axios.get('/api/pay/wx_pay/public/orderQuery?out_trade_no='+ this.out_trade_no)
+                                        .then(data => {
+                                            console.log(data);
+                                            if(data.data.code == 200){
+                                                self.$router.push({
+                                                    name: 'loan'
+                                                });
+                                            }else{
+                                                self.toast(data.data.msg);
+                                            }
+                                            self.$vux.confirm.hide();
+                                        })
+                                }
                             });
                         });
-                        console.log(data);
+                    },
+                    err => {
+                        this.toast(err);
                     }
                 )
             },
