@@ -67,10 +67,11 @@
                         let data= response.data;
                         if(data.errorCode === 0){
                             // 存储token
-                            this.$store.commit('LOGIN', data.data.token);
-                            this.$store.commit('SET_USER_ID', data.data.id);
-                            this.$store.commit('SET_LOGIN_USER_PHONE', data.data.phone);
-                            console.log(this.$store);
+                            // this.$store.commit('LOGIN', data.data.token);
+                            // this.$store.commit('SET_USER_ID', data.data.id);
+                            // this.$store.commit('SET_LOGIN_USER_PHONE', data.data.phone);
+                            this.toast('注册成功！我们会尽快安排工作人员与您联系！')
+                            // this.$router.push('/login');
                         }else{
                             this.toast(data.message);
                         }

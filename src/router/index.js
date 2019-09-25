@@ -140,21 +140,6 @@ const router = new Router({
                     name: 'pay',
                     path: 'pay',
                     component: resolve => require(['pages/step/components/pay'], resolve),
-                    beforeEnter: (to, from, next) => {
-                        let wxcode = getQueryString('code');
-                        if (wxcode == null) {
-                            let wxappid = 'wxe9cec454609e9fb9';
-                            let return_uri = encodeURIComponent('http://beimi.welcometo5g.cn/#/step/pay');
-                            let scope = 'snsapi_userinfo';
-                            let oauthUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize';
-                            let url = `${oauthUrl}?appid=${wxappid}&redirect_uri=${return_uri}&response_type=code&scope=${scope}&state=123#wechat_redirect`;
-
-                            window.location.href = url;
-                            next();
-                        }else{
-                            next();
-                        }
-                    }
                 },
             ]
         }]

@@ -66,12 +66,12 @@
                         </dt>
                         <dd><i class="icon"></i></dd>
                     </dl>
-<!--                    <dl class="menu-item">-->
-<!--                        <dt>-->
-<!--                            <router-link to="/agent/qr" @click.native="move()">个代测试</router-link>-->
-<!--                        </dt>-->
-<!--                        <dd><i class="icon"></i></dd>-->
-<!--                    </dl>-->
+                    <dl class="menu-item">
+                        <dt>
+                            <router-link to="/step/pay" @click.native="move()">充值</router-link>
+                        </dt>
+                        <dd><i class="icon"></i></dd>
+                    </dl>
 <!--                    <dl class="menu-item">-->
 <!--                        <dt>-->
 <!--                            <router-link to="/step/pay" @click.native="move()">支付测试</router-link>-->

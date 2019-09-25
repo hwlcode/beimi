@@ -248,7 +248,7 @@
                 if (ua.match(/MicroMessenger/i) == "micromessenger") {
                     // 获取wx code： 公众号支付必须
                     let wxappid = 'wxe9cec454609e9fb9';
-                    let return_uri = encodeURIComponent('http://beimi.welcometo5g.cn/#/step/credit');
+                    let return_uri = encodeURIComponent(public_methods.url.domain + '/#/step/credit');
                     let scope = 'snsapi_userinfo';
                     let oauthUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize';
                     let url = `${oauthUrl}?appid=${wxappid}&redirect_uri=${return_uri}&response_type=code&scope=${scope}&state=123#wechat_redirect`;
@@ -263,7 +263,7 @@
                 let body = '咨询服务费-' + this.payMoney; // 描述
                 let total_fee = this.payMoney;
                 let out_trade_no = this.out_trade_no;
-                let redirect_url = encodeURIComponent('http://beimi.welcometo5g.cn/#/step/credit?wxback=true');
+                let redirect_url = encodeURIComponent(public_methods.url.domain + '/#/step/credit?wxback=true');
                 this.axios.get(`/api/pay/wx_pay/create_h5_pay?attach=${attach}&body=${body}&total_fee=${total_fee}&out_trade_no=${out_trade_no}`).then(
                     res => {
                         let data = res.data;

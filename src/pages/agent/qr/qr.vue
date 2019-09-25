@@ -11,6 +11,7 @@
 
 <script type="text/ecmascript-6">
     import { Qrcode } from 'vux'
+    import {public_methods} from '../../../assets/js/public_method';
     export default {
         name: "qr",
         data() {
@@ -21,7 +22,7 @@
             }
         },
         created() {
-            this.QRCodeMsg = process.env.API_ROOT + '/agent/register';
+            this.QRCodeMsg = public_methods.url.domain + '/#/agent/register';
         },
         methods: {
 

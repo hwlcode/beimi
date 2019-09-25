@@ -119,11 +119,11 @@
             </div>
             <div class="pay-way">
                 <div class="title">选择支付方式：</div>
-                <div class="pay-item"><input type="radio" name="pay-way" v-model="payway" value="1"> 微信支付</div>
-                <div class="pay-item"><input type="radio" name="pay-way" v-model="payway" value="2"> 银行卡支付</div>
+                <div class="pay-item"><check-icon :value.sync="payWay">微信支付</check-icon></div>
+<!--                <div class="pay-item"><input type="radio" name="pay-way" v-model="payway" value="2"> 银行卡支付</div>-->
             </div>
-            <x-button :gradients="['#546BE0', '#546BE0']" @click.native="payOurMoney"
-                      style="border-radius:99px; margin-top: 20px;">下一步
+            <x-button :gradients="['#546BE0', '#546BE0']"
+                      style="border-radius:99px; margin-top: 20px;" @click.native="pay">充值
             </x-button>
 <!--            <x-button :gradients="['#546BE0', '#546BE0']" @click.native="scanQRCode"-->
 <!--                      style="border-radius:99px; margin-top: 20px;" id="scanQRCode">扫码支付-->
@@ -141,33 +141,54 @@
 
 <script type="text/ecmascript-6">
     import service from '../../../components/service/service';
-    import {XTable} from 'vux';
+    import {XTable, CheckIcon} from 'vux';
     import {wexinPay} from '../../../wechat/wechaty.js';
-    // import {scanQRCode} from '../../../wechat/scanQRCode.js';
+    import {public_methods, toast} from '../../../assets/js/public_method';
 
     export default {
         name: "pay",
         data() {
             return {
                 current: 0,
-                payway: 1,
-                openId: '',
-                code: '',
+
+                payWay: true,
+                code: null,
+                openId: null,
+                out_trade_no: `BM${ new Date().getTime() }` // 正式的时候需要修改
             }
         },
         created() {
 
         },
         mounted() {
-            let reg = new RegExp("(^|&)" + 'code' + "=([^&]*)(&|$)");
-            let url = window.location.href.split('#')[0];
-            let search = url.split('?')[1];
-            if (search) {
-                let r = search.match(reg);
-                if (r != null) {
-                    this.code = decodeURI(r[2]);
-                    this.getOpenId(this.code);
-                }
+            // 获取code方法只有在mounted里面可以获取
+            if (window.location.href.indexOf('code') != -1) {
+                this.code = this.getQueryString('code');
+                this.getOpenId(this.code);
+            }
+            // h5支付成功，查询订单
+            if(window.location.href.indexOf('wxback') != -1){
+                let self = this;
+                this.$vux.confirm.show({
+                    title: '确认支付结果',
+                    'confirm-text': '己完成支付',
+                    'cancel-text': '支付遇到问题',
+                    onCancel : () => {
+                        self.$vux.confirm.hide();
+                    },
+                    onConfirm : () => {
+                        self.axios.get('/api/pay/wx_pay/orderQuery?out_trade_no='+ this.out_trade_no)
+                            .then(data => {
+                                console.log(data);
+                                if(data.data.code == 200){
+                                    self.toast('充值成功');
+                                }else{
+                                    self.toast(data.data.msg);
+                                }
+                                self.$vux.confirm.hide();
+                            })
+                    }
+                });
             }
         },
         watch: {},
@@ -188,42 +209,109 @@
             selectTab(cur) {
                 this.current = cur;
             },
+            pay() {
+                if (!this.payWay) {
+                    this.toast('请择支付方式');
+                    return;
+                }
+                let ua = navigator.userAgent.toLowerCase();//获取判断用的对象
+                if (ua.match(/MicroMessenger/i) == "micromessenger") {
+                    // 获取wx code： 公众号支付必须
+                    let wxappid = 'wxe9cec454609e9fb9';
+                    let return_uri = encodeURIComponent(public_methods.url.domain + '/#/step/pay');
+                    let scope = 'snsapi_userinfo';
+                    let oauthUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize';
+                    let url = `${oauthUrl}?appid=${wxappid}&redirect_uri=${return_uri}&response_type=code&scope=${scope}&state=123#wechat_redirect`;
+
+                    window.location.href = url;
+                } else {
+                    this.h5pay();
+                }
+            },
+            h5pay() {
+                let attach = '充值'; // 标题
+                let body = '充值-' + this.payMoney; // 描述
+                let total_fee = 0.01;
+                let out_trade_no = this.out_trade_no;
+                let redirect_url = encodeURIComponent(public_methods.url.domain + '/#/step/pay?wxback=true');
+                this.axios.get(`/api/pay/wx_pay/create_h5_pay?attach=${attach}&body=${body}&total_fee=${total_fee}&out_trade_no=${out_trade_no}`).then(
+                    res => {
+                        let data = res.data;
+                        window.location.href = data['mweb_url'][0] + `&redirect_url=${redirect_url}`;
+                    }
+                )
+            },
             getOpenId(code) {
                 this.axios.get('/api/pay/wx_pay/getOpenId?code=' + code).then(
                     res => {
                         this.openId = res.data.openid;
+                        this.payOurMoney();
                     }
                 )
             },
             payOurMoney() {
+                let self = this;
                 let openid = this.openId;
                 let attach = '充值'; // 标题
                 let body = '充值-' + this.payMoney; // 描述
-                let total_fee = this.payMoney;
-                this.axios.get('/api/pay/wx_pay/order?openid=' + openid + '&attach=' + attach + '&body=' + body + '&total_fee=' + total_fee).then(
+                let total_fee = 0.01;
+                let out_trade_no = this.out_trade_no;
+
+                this.axios.get('/api/pay/wx_pay/order?openid=' + openid + '&attach=' + attach + '&body=' + body + '&total_fee=' + total_fee+'&out_trade_no=' + out_trade_no).then(
                     res => {
                         let data = res.data;
-                        new wexinPay(data);
-                        console.log(data);
+                        new wexinPay(data).then((data) => {
+                            this.$vux.confirm.show({
+                                title: '确认支付结果',
+                                'confirm-text': '己完成支付',
+                                'cancel-text': '支付遇到问题',
+                                onCancel : () => {
+                                    self.$vux.confirm.hide();
+                                },
+                                onConfirm : () => {
+                                    self.axios.get('/api/pay/wx_pay/public/orderQuery?out_trade_no='+ this.out_trade_no)
+                                        .then(data => {
+                                            console.log(data);
+                                            if(data.data.code == 200){
+                                                self.toast('充值成功');
+                                            }else{
+                                                self.toast(data.data.msg);
+                                            }
+                                            self.$vux.confirm.hide();
+                                        })
+                                }
+                            });
+                        });
+                    },
+                    err => {
+                        this.toast(err);
                     }
                 )
             },
-            // scanQRCode() {
-            //     let openid = this.openId;
-            //     let attach = '充值'; // 标题
-            //     let body = '充值-' + this.payMoney; // 描述
-            //     let total_fee = this.payMoney;
-            //     this.axios.get('/api/pay/wx_pay/order?openid=' + openid + '&attach=' + attach + '&body=' + body + '&total_fee=' + total_fee).then(
-            //         res => {
-            //             let data = res.data;
-            //             new scanQRCode(data);
-            //             console.log(data);
-            //         }
-            //     )
-            // }
+            toast(text) {
+                this.$vux.toast.show({
+                    type: 'text',
+                    text: text,
+                    width: '80%',
+                    position: 'top'
+                });
+            },
+            getQueryString(name) {
+                let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+                let reg_rewrite = new RegExp("(^|/)" + name + "/([^/]*)(/|$)", "i");
+                let r = window.location.search.substr(1).match(reg);
+                let q = window.location.pathname.substr(1).match(reg_rewrite);
+                if (r != null) {
+                    return unescape(r[2]);
+                } else if (q != null) {
+                    return unescape(q[2]);
+                } else {
+                    return null;
+                }
+            }
         },
         components: {
-            XTable,
+            XTable, CheckIcon,
             'v-service': service
         }
     };
