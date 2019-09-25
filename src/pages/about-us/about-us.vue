@@ -96,12 +96,17 @@
                 img3: require('./images/5.jpg'),
                 img4: require('./images/6.jpg'),
                 img5: require('./images/3.jpg'),
-                isLogin: this.$store.state.isLogin
+                isLogin: false
+            }
+        },
+        created(){
+            if(window.sessionStorage.getItem('user')){
+                this.isLogin = true
             }
         },
         methods: {
             checkLogin(){
-                if(this.isLogin){
+                if(window.sessionStorage.getItem('user')){
                     this.$router.push('/step');
                 }else{
                     this.$router.push('/login');

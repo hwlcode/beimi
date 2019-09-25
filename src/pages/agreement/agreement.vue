@@ -15,14 +15,14 @@
             <dl>
                 <dt>
                     <span>隐私政策</span>
-                    <router-link to="/agreement-detail">阅读协议&gt;&gt;</router-link>
+                    <router-link to="/privacy">阅读协议&gt;&gt;</router-link>
                 </dt>
                 <dd>本网站由Lendio，Inc。（“Lendio”）拥有和运营。我们希望您了解我们收集的信息，我们如何保护这些信息以及我们如何使用您的信息。本隐私政策适用于我们通过Lendio网站及其他方式收集的信息。您对Lendio网站和我们服务的使用受本隐私政策和使用条款的约束。</dd>
             </dl>
             <dl>
                 <dt>
                     <span>客户服务保证</span>
-                    <router-link to="/agreement-detail">阅读协议&gt;&gt;</router-link>
+                    <router-link to="/customer-service">阅读协议&gt;&gt;</router-link>
                 </dt>
                 <dd>Lendio客户服务保证<br/>
                     我们对您的承诺：<br/>

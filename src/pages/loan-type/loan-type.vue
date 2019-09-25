@@ -109,7 +109,12 @@
             return{
                 img1: require('./iamges/5.jpg'),
                 img2:require('./iamges/9.jpg'),
-                isLogin: this.$store.state.isLogin
+                isLogin: false
+            }
+        },
+        created(){
+            if(window.sessionStorage.getItem('user')){
+                this.isLogin = true;
             }
         },
         components: {
@@ -119,7 +124,7 @@
         },
         methods: {
             checkLogin(){
-                if(this.isLogin){
+                if(window.sessionStorage.getItem('user')){
                     this.$router.push('/step');
                 }else{
                     this.$router.push('/login');

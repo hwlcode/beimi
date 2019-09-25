@@ -125,6 +125,9 @@
             <x-button :gradients="['#546BE0', '#546BE0']" @click.native="payOurMoney"
                       style="border-radius:99px; margin-top: 20px;">下一步
             </x-button>
+<!--            <x-button :gradients="['#546BE0', '#546BE0']" @click.native="scanQRCode"-->
+<!--                      style="border-radius:99px; margin-top: 20px;" id="scanQRCode">扫码支付-->
+<!--            </x-button>-->
             <p class="agreement">
                 充值即同意
                 <router-link to="/">《合作协议》</router-link>
@@ -140,6 +143,7 @@
     import service from '../../../components/service/service';
     import {XTable} from 'vux';
     import {wexinPay} from '../../../wechat/wechaty.js';
+    // import {scanQRCode} from '../../../wechat/scanQRCode.js';
 
     export default {
         name: "pay",
@@ -196,14 +200,27 @@
                 let attach = '充值'; // 标题
                 let body = '充值-' + this.payMoney; // 描述
                 let total_fee = this.payMoney;
-                this.axios.get('/api/pay/wx_pay/order?openid=' + openid + '&attach=' + attach + '&body=' +body + '&total_fee=' + total_fee).then(
+                this.axios.get('/api/pay/wx_pay/order?openid=' + openid + '&attach=' + attach + '&body=' + body + '&total_fee=' + total_fee).then(
                     res => {
                         let data = res.data;
                         new wexinPay(data);
                         console.log(data);
                     }
                 )
-            }
+            },
+            // scanQRCode() {
+            //     let openid = this.openId;
+            //     let attach = '充值'; // 标题
+            //     let body = '充值-' + this.payMoney; // 描述
+            //     let total_fee = this.payMoney;
+            //     this.axios.get('/api/pay/wx_pay/order?openid=' + openid + '&attach=' + attach + '&body=' + body + '&total_fee=' + total_fee).then(
+            //         res => {
+            //             let data = res.data;
+            //             new scanQRCode(data);
+            //             console.log(data);
+            //         }
+            //     )
+            // }
         },
         components: {
             XTable,

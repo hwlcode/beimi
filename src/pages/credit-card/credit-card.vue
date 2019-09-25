@@ -84,7 +84,6 @@
     import {Checker, CheckerItem, Flexbox, FlexboxItem} from 'vux';
     import {public_methods, toast} from '../../assets/js/public_method';
     let PAGESIZE = 5;
-    let RECOMMENDSTATUS = 0;
 
     export default {
         name: "credit-card",
@@ -119,7 +118,8 @@
                 cardList: [],
                 isLast: false,
                 page: 1,
-                selectedType: null
+                selectedType: null,
+                recommendStatus: 1
             }
         },
         computed: {
@@ -149,7 +149,8 @@
             }
         },
         created() {
-            this.getProductList(this.page, PAGESIZE, '1,2,3,4,5', RECOMMENDSTATUS);
+            this.recommendStatus = 1;
+            this.getProductList(this.page, PAGESIZE, '1,2,3,4,5', 1);
         },
         methods: {
             showAllEvent() {
@@ -160,7 +161,8 @@
                 this.page = 1;
                 this.selectedType = type;
                 this.cardList = [];
-                this.getProductList(this.page, PAGESIZE, type, RECOMMENDSTATUS);
+                this.recommendStatus = 1;
+                this.getProductList(this.page, PAGESIZE, type, 1);
             },
             showMoreMsg(e) {
                 let moreMsg = e.currentTarget.parentElement.previousElementSibling;
@@ -177,11 +179,12 @@
             selectedMenuEvent(){
                 this.cardList = [];
                 this.selectedType = this.selectedMenu;
-                this.getProductList(this.page, PAGESIZE, this.selectedMenu, RECOMMENDSTATUS);
+                this.recommendStatus = 0;
+                this.getProductList(this.page, PAGESIZE, this.selectedMenu, 0);
             },
             getMoreProducts(){
                 this.page++;
-                this.getProductList(this.page, PAGESIZE, this.selectedType, RECOMMENDSTATUS);
+                this.getProductList(this.page, PAGESIZE, this.selectedType, this.recommendStatus);
             },
             /**
              * accumulationFund: "3" // 公积金
@@ -232,7 +235,7 @@
              uploadClassify: 10000001 // 上传分类
              wages: 3 // 工资
              */
-            getProductList(page = this.page, pageSize = PAGESIZE, cardType='', recommendStatus = RECOMMENDSTATUS) {
+            getProductList(page = this.page, pageSize = PAGESIZE, cardType='', recommendStatus = 1) {
                 this.axios.post(public_methods.api.productList + '?page=' + page + '&pageSize=' + pageSize + '&cardType=' + cardType + '&recommendStatus=' + recommendStatus).then(
                     response => {
                         let data = response.data;

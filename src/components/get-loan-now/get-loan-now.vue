@@ -20,7 +20,12 @@
         data() {
             return {
                 needMoney: '',
-                isLogin: this.$store.state.isLogin
+                isLogin: false
+            }
+        },
+        created(){
+            if(window.sessionStorage.getItem('user')){
+                this.isLogin = true
             }
         },
         methods: {
@@ -28,7 +33,7 @@
                 this.$store.commit('SET_NEED_MONEY', this.needMoney || 0);
             },
             checkLogin(){
-                if(this.isLogin){
+                if(window.sessionStorage.getItem('user')){
                     this.$router.push({path: '/step'});
                 }else{
                     this.$router.push({path: '/login'});

@@ -60,6 +60,18 @@ const router = new Router({
             props: true
         },
         {
+            path: '/customer-service',
+            name: 'customer-service',
+            component: resolve => require(['pages/customer-service/customer-service'], resolve),
+            props: true
+        },
+        {
+            path: '/privacy',
+            name: 'privacy',
+            component: resolve => require(['pages/privacy/privacy'], resolve),
+            props: true
+        },
+        {
             path: '/loan-type',
             name: 'loan-type',
             component: resolve => require(['pages/loan-type/loan-type'], resolve),
@@ -122,7 +134,7 @@ const router = new Router({
                     meta: {
                         requireAuth: true
                     },
-                    component: resolve => require(['pages/step/components/loan'], resolve)
+                    component: resolve => require(['pages/step/components/loan'], resolve),
                 },
                 {
                     name: 'pay',
@@ -132,13 +144,12 @@ const router = new Router({
                         let wxcode = getQueryString('code');
                         if (wxcode == null) {
                             let wxappid = 'wxe9cec454609e9fb9';
-                            let return_uri = encodeURIComponent('http://beimi.welcometo5g.cn/step/pay');
+                            let return_uri = encodeURIComponent('http://beimi.welcometo5g.cn/#/step/pay');
                             let scope = 'snsapi_userinfo';
                             let oauthUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize';
                             let url = `${oauthUrl}?appid=${wxappid}&redirect_uri=${return_uri}&response_type=code&scope=${scope}&state=123#wechat_redirect`;
 
                             window.location.href = url;
-                            console.log(to);
                             next();
                         }else{
                             next();

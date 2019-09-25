@@ -7,8 +7,8 @@
             </dl>
             <ul>
                 <li @click.stop="showQr"></li>
-                <li><a href="https://www.toutiao.com/c/user/111623788449/#mid=1626047715435533"></a></li>
                 <li><a href="https://weibo.com/u/7003508369"></a></li>
+                <li><a href="https://www.toutiao.com/c/user/111623788449/#mid=1626047715435533"></a></li>
             </ul>
             <div class="qrcode" v-show="show"><img :src="qrcode" alt=""></div>
             <div class="link">
@@ -22,12 +22,10 @@
                 <span>/</span>
                 <router-link to="/join-in">申请加盟</router-link>
             </div>
-
         </div>
 
         <div class="copyright">
-            版权所有©2019 Lendio。版权所有。使用条款 隐私政策<br>
-            4100 Chapel Ridge Road，Suite 500，Lehi，UT 84043
+            版权所有©2019 beimi版权所有。<router-link to="/agreement-detail">使用条款</router-link> <router-link to="/privacy">隐私政策</router-link>
         </div>
     </div>
 </template>

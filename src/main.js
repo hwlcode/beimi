@@ -13,7 +13,7 @@ import VueAxios from 'vue-axios'
 Vue.use(VueAxios, axios);
 axios.defaults.baseURL = process.env.API_ROOT;
 // 给每个请求头加上token
-axios.defaults.headers.common['token'] = `${store.state.token}`;
+// axios.defaults.headers.common['token'] = `${window.sessionStorage.getItem('token').replace('"','')}`;
 
 // 路由里面带有requireAuth选项，需要验证token是否存在，否则跳转到登录页面
 router.beforeEach((to, from, next) => {
@@ -22,7 +22,7 @@ router.beforeEach((to, from, next) => {
         store.commit('SET_URL', document.URL);
     }
     if (to.meta.requireAuth) {  // 判断该路由是否需要登录权限
-        if (store.state.token) {  // 通过vuex state获取当前的token是否存在
+        if (window.sessionStorage.getItem('user')) {  // 通过vuex state获取当前的token是否存在
             next();
         } else {
             next({
@@ -37,8 +37,8 @@ router.beforeEach((to, from, next) => {
 // http request 拦截器
 axios.interceptors.request.use(
     config => {
-        if (store.state.token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
-            config.headers['token'] = `${store.state.token}`;
+        if (window.sessionStorage.getItem('token')) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
+            config.headers['token'] = `${window.sessionStorage.getItem('token').replace('"','').replace('"','')}`;
         }
         return config;
     },

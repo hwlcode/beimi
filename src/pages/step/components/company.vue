@@ -103,7 +103,7 @@
             }
         },
         created() {
-            if(this.$store.state.isLogin){
+            if(window.sessionStorage.getItem('user')){
                 this.isLogin = true;
                 this.showCompanyInfo = true;
             }else{
@@ -118,6 +118,7 @@
         },
         methods: {
             viewCreditPoints(){
+                this.$store.commit('SET_CURRENT_TAB_PAGE', 1);
                 this.$router.push({
                     name: 'credit',
                     params: {
@@ -200,13 +201,13 @@
                     .then(response => {
                         let data = response.data;
                         if (data.errorCode === 0) {
-                            // console.log(this.companyCreditScore);
                             this.$router.push({
                                 name: 'credit',
                                 params: {
-                                    companyCreditScore: this.companyCreditScore || 0
+                                    companyCreditScore: this.companyCreditScore || 0,
                                 }
                             });
+                            this.$store.commit('SET_CURRENT_TAB_PAGE', 2);
                         }
                     })
                     .catch(error => {
@@ -278,6 +279,8 @@
             color: rgba(0, 0, 0, 1);
             font-size: 16px;
         }
+
+        .vux-cell-value{color:#000;}
 
         .tips-container {
             position: relative;

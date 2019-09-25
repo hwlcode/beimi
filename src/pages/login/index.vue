@@ -73,26 +73,29 @@
                 }
                 this.axios.get(public_methods.api.loginVerifyCode + '?phone=' + this.phone)
                     .then(
-                    data => {
-                        data = data.data;
-                        if(data.errorCode == 0){
-                            this.sending = false;
-                            this.disabled = true;
-                            let result = setInterval(() => {
-                                --this.second;
-                                if (this.second <= 0) {
-                                    clearInterval(result);
-                                    this.sending = true;
-                                    this.disabled = false;
-                                    this.second = 60;
-                                }
-                            }, 1000);
-                        }else{
-                            this.toast(data.message);
-                        }
-                    }).catch(e => {
-                        this.toast(e);
-                     });
+                        data => {
+                            data = data.data;
+                            if (data.errorCode == 0) {
+                                this.sending = false;
+                                this.disabled = true;
+                                let result = setInterval(() => {
+                                    --this.second;
+                                    if (this.second <= 0) {
+                                        clearInterval(result);
+                                        this.sending = true;
+                                        this.disabled = false;
+                                        this.second = 60;
+                                    }
+                                }, 1000);
+                            }
+                            if (data.errorCode === 1052) {
+                                this.toast('手机号码未注册，请先注册');
+                            } else {
+                                this.toast(data.message);
+                            }
+                        }).catch(e => {
+                    this.toast(e);
+                });
             },
             getImageCode() {
                 if (this.phone === '' || !PHONE_REGX.test(this.phone)) {
@@ -107,24 +110,36 @@
                     this.toast('请输入有效的手机号码');
                     return false;
                 }
-                if(this.mobileCode == '' || this.imgCode == ''){
+                if (this.mobileCode == '' || this.imgCode == '') {
                     this.toast('短信验证码或图形验证码不正确！');
                     return;
                 }
-                this.axios.post(public_methods.api.login + '?phone=' + this.phone + '&verifyCode=' +  this.mobileCode + '&randomCode=' + this.imgCode.toLowerCase())
+                this.axios.post(public_methods.api.login + '?phone=' + this.phone + '&verifyCode=' + this.mobileCode + '&randomCode=' + this.imgCode.toLowerCase())
                     .then(response => {
-                        let data= response.data;
-                        if(data.errorCode === 0){
+                        let data = response.data;
+                        if (data.errorCode === 0) {
                             // 存储token
                             this.$store.commit('LOGIN', data.data.token);
                             this.$store.commit('SET_USER_ID', data.data.id);
                             this.$store.commit('SET_LOGIN_USER_PHONE', data.data.phone);
+
+                            if (window.sessionStorage.getItem('user')) {
+                                window.sessionStorage.removeItem('user');
+                                window.sessionStorage.setItem('user', JSON.stringify(data.data));
+                                window.sessionStorage.setItem('token', JSON.stringify(data.data.token));
+                            }else{
+                                window.sessionStorage.setItem('user', JSON.stringify(data.data));
+                                window.sessionStorage.setItem('token', JSON.stringify(data.data.token));
+                            }
                             // console.log(this.$store);
                             this.$router.push({
                                 path: '/'
                             });
-                        }else{
-                            this.toast(data.message);
+                        }
+                        if (data.errorCode === 1052) {
+                            this.toast('手机号码未注册，请先注册');
+                        } else if (data.message == null) {
+                            this.toast('登录成功！');
                         }
                     })
                     .catch(error => {

@@ -66,18 +66,18 @@
                         </dt>
                         <dd><i class="icon"></i></dd>
                     </dl>
-                    <dl class="menu-item">
-                        <dt>
-                            <router-link to="/agent/qr" @click.native="move()">个代测试</router-link>
-                        </dt>
-                        <dd><i class="icon"></i></dd>
-                    </dl>
-                    <dl class="menu-item">
-                        <dt>
-                            <router-link to="/step/pay" @click.native="move()">支付测试</router-link>
-                        </dt>
-                        <dd><i class="icon"></i></dd>
-                    </dl>
+<!--                    <dl class="menu-item">-->
+<!--                        <dt>-->
+<!--                            <router-link to="/agent/qr" @click.native="move()">个代测试</router-link>-->
+<!--                        </dt>-->
+<!--                        <dd><i class="icon"></i></dd>-->
+<!--                    </dl>-->
+<!--                    <dl class="menu-item">-->
+<!--                        <dt>-->
+<!--                            <router-link to="/step/pay" @click.native="move()">支付测试</router-link>-->
+<!--                        </dt>-->
+<!--                        <dd><i class="icon"></i></dd>-->
+<!--                    </dl>-->
                 </div>
             </div>
         </div>
@@ -98,8 +98,18 @@
         data() {
             return {
                 showMenu: false,
-                isLogin: this.$store.state.isLogin,
-                loginUserPhone: this.$store.state.phone,
+                isLogin: false,
+                loginUserPhone: '',
+            }
+        },
+        created(){
+            if(window.sessionStorage.getItem('user')){
+                let user = JSON.parse(window.sessionStorage.getItem('user'));
+                this.isLogin = true;
+                this.loginUserPhone = user['userName']
+            }else{
+                this.isLogin = false;
+                this.loginUserPhone = '';
             }
         },
         mounted() {
@@ -129,8 +139,12 @@
                         let data = response.data;
                         if (data.errorCode == 0) {
                             // 清除token
+                            window.sessionStorage.removeItem('user');
+                            window.sessionStorage.removeItem('token');
+
                             this.$store.commit('LOGOUT');
                             this.isLogin = false;
+
                             this.toast('您的帐号退出成功！');
                             this.showMenu = false;
                             console.log(this.$store);

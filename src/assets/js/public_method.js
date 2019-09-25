@@ -28,6 +28,8 @@ export let public_methods = {
 
         agentRegister: '/v1/web/agent/register', // 个人代理注册
         agentLogin: '/v1/web/agent/login', // 个人代理登录
+
+        matchingProductList: '/v1/api/product/matchingProductList' // 匹配贷款产品
     },
     url: {
         domain: 'http://tutuspaces.com:10880'

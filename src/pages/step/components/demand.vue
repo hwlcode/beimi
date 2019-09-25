@@ -18,10 +18,10 @@
                 下一步
             </x-button>
 
-            <x-button :gradients="['#546BE0', '#546BE0']" @click.native="testPay"
-                      style="border-radius:99px; margin-top: 80px;">
-                测试支付
-            </x-button>
+<!--            <x-button :gradients="['#546BE0', '#546BE0']" @click.native="testPay"-->
+<!--                      style="border-radius:99px; margin-top: 80px;">-->
+<!--                测试支付-->
+<!--            </x-button>-->
         </div>
     </div>
 </template>
@@ -91,7 +91,7 @@
             }
         },
         created() {
-            if(!this.$store.state.isLogin) {
+            if(!window.sessionStorage.getItem('user')) {
                 let money = parseInt(this.$store.state.needMoney, 10);
                 if (money > 0 && money <= 1000) {
                     this.moneyValue = 1;
@@ -134,7 +134,7 @@
                 });
             },
             getLoan() {
-                if(this.$store.state.isLogin){
+                if(window.sessionStorage.getItem('user')){
                     this.axios.get(public_methods.api.loan)
                         .then(res => {
                             let data = res.data;

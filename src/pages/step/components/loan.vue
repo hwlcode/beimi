@@ -43,31 +43,31 @@
                             <li>★ 访问报告以帮助您了解您的业务</li>
                         </ul>
                         <div class="btn-box">
-                            <x-button class="btn">点击查看详情</x-button>
+                            <x-button class="btn" @click.native="showCredit">点击查看详情</x-button>
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td><img :src="img3" alt="" width="30"></td>
-                    <td>
-                        <h3>信用报告专业版</h3>
-                        <ul>
-                            <li>★ 一小时内免费资助提案</li>
-                            <li>★ 专注于创业/新业务资金</li>
-                            <li>★ 无需财务或纳税申报表</li>
-                            <li>★ 无需抵押品</li>
-                            <li>★ 灵活的付款选项</li>
-                        </ul>
-                        <div class="btn-box">
-                            <x-button class="btn">点击查看详情</x-button>
-                        </div>
-                        <p>
-                            这里可以放一些其他文字内容这里可以放一些其他文字内容
-                            这里可以放一些其他文字内容这里可以放一些其他文字内容
-                            这里可以放一些其他文字内容
-                        </p>
-                    </td>
-                </tr>
+                <!--                <tr>-->
+                <!--                    <td><img :src="img3" alt="" width="30"></td>-->
+                <!--                    <td>-->
+                <!--                        <h3>信用报告专业版</h3>-->
+                <!--                        <ul>-->
+                <!--                            <li>★ 一小时内免费资助提案</li>-->
+                <!--                            <li>★ 专注于创业/新业务资金</li>-->
+                <!--                            <li>★ 无需财务或纳税申报表</li>-->
+                <!--                            <li>★ 无需抵押品</li>-->
+                <!--                            <li>★ 灵活的付款选项</li>-->
+                <!--                        </ul>-->
+                <!--                        <div class="btn-box">-->
+                <!--                            <x-button class="btn">点击查看详情</x-button>-->
+                <!--                        </div>-->
+                <!--                        <p>-->
+                <!--                            这里可以放一些其他文字内容这里可以放一些其他文字内容-->
+                <!--                            这里可以放一些其他文字内容这里可以放一些其他文字内容-->
+                <!--                            这里可以放一些其他文字内容-->
+                <!--                        </p>-->
+                <!--                    </td>-->
+                <!--                </tr>-->
                 </tbody>
             </x-table>
         </div>
@@ -100,7 +100,7 @@
                         </Flexbox>
                         <Flexbox>
                             <FlexboxItem :span="3" class="bold">额度氛围：</FlexboxItem>
-                            <FlexboxItem :span="9" >2万~30万元</FlexboxItem>
+                            <FlexboxItem :span="9">2万~30万元</FlexboxItem>
                         </Flexbox>
                         <div class="btn-box">
                             <x-button class="btn">点击查看详情</x-button>
@@ -166,9 +166,9 @@
             <p style="text-align: center; margin-bottom: 20px;">根据您的业务需求和情况，我们认为这些可能是您需要的优质资源</p>
             <x-table full-bordered style="background-color:#fff;">
                 <thead>
-                    <tr>
-                        <td colspan="2" style="background: #DFE4FF; font-size: 14px; font-weight: 700">合作伙伴服务</td>
-                    </tr>
+                <tr>
+                    <td colspan="2" style="background: #DFE4FF; font-size: 14px; font-weight: 700">合作伙伴服务</td>
+                </tr>
                 </thead>
                 <tbody>
                 <tr>
@@ -226,12 +226,12 @@
                         </p>
                     </td>
                 </tr>
-                    <tr>
-                        <td colspan="2" style=" background: #E5E5E5">
-                            <router-link to="/">点击查看更多</router-link>
-                            <x-icon type="ios-arrow-down" size="10"></x-icon>
-                        </td>
-                    </tr>
+                <tr>
+                    <td colspan="2" style=" background: #E5E5E5">
+                        <router-link to="/">点击查看更多</router-link>
+                        <x-icon type="ios-arrow-down" size="10"></x-icon>
+                    </td>
+                </tr>
                 </tbody>
             </x-table>
         </div>
@@ -242,6 +242,8 @@
 <script>
     import {Flexbox, FlexboxItem, XTable} from 'vux'
     import footerComponent from '../../../components/footer/index';
+    import {public_methods} from '../../../assets/js/public_method';
+
     export default {
         name: 'loan',
         data() {
@@ -254,15 +256,85 @@
                 img6: require('../images/13.png'),
                 img7: require('../images/14.png'),
                 img8: require('../images/15.png'),
+
+                selectedCity: [],
+                isLogin: false
             }
         },
         created() {
-
+            if(window.sessionStorage.getItem('user')){
+                this.isLogin = true;
+                this.getCompanyInfo();
+            }
         },
         mounted() {
 
         },
-        methods: {},
+        methods: {
+            showCredit() {
+                this.hasReview();
+            },
+            hasReview() {
+                this.axios.get(public_methods.api.hasReview).then(
+                    response => {
+                        let data = response.data;
+                        if (data.data) {
+                            this.$router.push({
+                                name: 'credit'
+                            });
+                            this.$store.commit('SET_CURRENT_TAB_PAGE', 3);
+                        } else {
+                            this.$router.push({
+                                name: 'credit'
+                            });
+                            this.$store.commit('SET_CURRENT_TAB_PAGE', 2);
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    });
+            },
+            getCompanyInfo() {
+                if (this.isLogin) {
+                    this.axios.get(public_methods.api.getCompanyInfo)
+                        .then(res => {
+                            let data = res.data;
+                            if (data.errorCode == 0) {
+                                this.selectedCity.push(data.data.provinceCode + '');
+                                this.selectedCity.push(data.data.cityCode + '');
+                                this.selectedCity.push(data.data.areaCode + '');
+
+                                this.matchingProductList(this.selectedCity);
+                            } else {
+                                this.toast(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                }
+            },
+            matchingProductList(obj) {
+                this.axios.post(public_methods.api.matchingProductList+`?provice=${obj[0]}&city=${obj[1]}area=${obj[2]}`).then(res => {
+                    let data = res.data;
+                    if (data.errorCode == 0) {
+                        console.log(data);
+                    } else {
+                        this.toast(data.message);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });
+            },
+            toast(text) {
+                this.$vux.toast.show({
+                    type: 'text',
+                    text: text,
+                    width: '80%',
+                    position: 'top'
+                });
+            }
+        },
         components: {
             Flexbox,
             FlexboxItem,
@@ -409,8 +481,19 @@
             font-size: 10px;
             color: #646464;
             margin-bottom: 10px;
-            .bold{font-weight: 700; font-size: 10px; margin-left: 10px; text-align: center; line-height: 20px;}
-            .vux-flexbox-item{line-height: 20px;}
+
+            .bold {
+                font-weight: 700;
+                font-size: 10px;
+                margin-left: 10px;
+                text-align: center;
+                line-height: 20px;
+            }
+
+            .vux-flexbox-item {
+                line-height: 20px;
+            }
+
             h2 {
                 color: #323232;
                 font-size: 17px;

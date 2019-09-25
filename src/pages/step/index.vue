@@ -58,7 +58,8 @@
                 this.step = index;
                 this.$router.push({
                     name: this.list[index].value
-                })
+                });
+                this.$store.commit('SET_CURRENT_TAB_PAGE', 1);
             },
             handleBack() {
                 if (this.step > 0) {

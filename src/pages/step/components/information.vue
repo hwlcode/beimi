@@ -159,7 +159,7 @@
             }
         },
         created() {
-            if(this.$store.state.isLogin){
+            if(window.sessionStorage.getItem('user')){
                 this.isLogin = true;
                 this.showUserInfo = true;
             }else{

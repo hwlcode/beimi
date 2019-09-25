@@ -60,8 +60,13 @@
                 img1: require('./images/5.png'),
                 img2: require('./images/6.png'),
                 needMoney: '',
-                isLogin: this.$store.state.isLogin
+                isLogin: false
             }
+        },
+        created(){
+          if(window.sessionStorage.getItem('user')){
+              this.isLogin = true;
+          }
         },
         mounted() {
 
@@ -71,7 +76,7 @@
                 this.$store.commit('SET_NEED_MONEY', this.needMoney || 0);
             },
             checkLogin(){
-                if(this.isLogin){
+                if(window.sessionStorage.getItem('user')){
                     this.$router.push('/step');
                 }else{
                     this.$router.push('/login');

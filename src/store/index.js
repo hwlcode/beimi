@@ -19,6 +19,8 @@ export default new Vuex.Store({
         companyName: null,
         phone: null,
         url: null,
+        showReport: false,
+        currentTabPage: 1,
     },
     getters: {},
     mutations: {
@@ -54,6 +56,12 @@ export default new Vuex.Store({
         },
         SET_URL(state, val){
             state.url = val;
+        },
+        SET_SHOW_REPORT(state, val){
+            state.showReport = val;
+        },
+        SET_CURRENT_TAB_PAGE(state, val){
+            state.currentTabPage = val;
         }
     },
     actions: {}
