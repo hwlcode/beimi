@@ -96,6 +96,17 @@ const router = new Router({
             props: true
         },
         {
+            path: '/agent/free-register',
+            name: 'register',
+            component: resolve => require(['pages/agent/free-register/free-register'], resolve),
+            props: true
+        },
+        {
+            name: 'pay',
+            path: '/agent/user/pay',
+            component: resolve => require(['pages/pay/pay'], resolve),
+        },
+        {
             path: '/step',
             name: 'step',
             component: resolve => require(['pages/step'], resolve),
@@ -135,12 +146,7 @@ const router = new Router({
                         requireAuth: true
                     },
                     component: resolve => require(['pages/step/components/loan'], resolve),
-                },
-                {
-                    name: 'pay',
-                    path: 'pay',
-                    component: resolve => require(['pages/step/components/pay'], resolve),
-                },
+                }
             ]
         }]
 

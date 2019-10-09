@@ -37,21 +37,29 @@
             }
         },
         created() {
-            // if (this.step === 0) {
-            //     this.handleSwitchComponent(this.list[0].value)
-            // }
+        },
+        mounted() {
+            let path = this.$route.path;
+            if (path.indexOf('demand') != -1) {
+                this.step = 0;
+            } else if (path.indexOf('information') != -1) {
+                this.step = 1;
+            } else if (path.indexOf('company') != -1) {
+                this.step = 2;
+            } else if (path.indexOf('credit') != -1) {
+                this.step = 3;
+            } else if (path.indexOf('loan') != -1) {
+                this.step = 4;
+            }
         },
         watch: {
             $route(to, from) {
-                this.list.forEach((item,index) =>{
-                    if(this.$route.path.indexOf(item.value) != -1){
+                this.list.forEach((item, index) => {
+                    if (this.$route.path.indexOf(item.value) != -1) {
                         this.step = index;
                     }
                 });
             }
-        },
-        mounted() {
-
         },
         methods: {
             handleItemClick(index) {
@@ -60,6 +68,14 @@
                     name: this.list[index].value
                 });
                 this.$store.commit('SET_CURRENT_TAB_PAGE', 1);
+                // if (index == 3) {
+                // if (window.localStorage.getItem('identifyCode')) {
+                //     this.toast('当前为免费贷款用户!');
+                //     this.$store.commit('SET_CURRENT_TAB_PAGE', 3);
+                // } else {
+                //     this.$store.commit('SET_CURRENT_TAB_PAGE', 1);
+                // }
+                // }
             },
             handleBack() {
                 if (this.step > 0) {
@@ -83,6 +99,14 @@
                 } else {
 
                 }
+            },
+            toast(text) {
+                this.$vux.toast.show({
+                    type: 'text',
+                    text: text,
+                    width: '80%',
+                    position: 'top'
+                });
             }
         }
     }

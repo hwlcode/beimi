@@ -7,7 +7,7 @@
                         :percent="percent"
                         :stroke-width="2"
                         stroke-color="#3e92f4">
-<!--                        <span>{{ percent }}%</span>-->
+                        <!--                        <span>{{ percent }}%</span>-->
                     </x-circle>
                     <div class="show-score">
                         <span style="font-size: 45px;" v-if="companyCreditScore > 0">{{companyCreditScore}}分</span>
@@ -160,7 +160,7 @@
                 code: null,
                 openId: null,
                 payMoney: 0.01,  // 正式的时候需要修改
-                out_trade_no: `BM${ new Date().getTime() }` // 正式的时候需要修改
+                out_trade_no: `BM${new Date().getTime()}` // 正式的时候需要修改
             }
         },
         watch: {
@@ -177,9 +177,9 @@
             this.companyCreditScore = this.$route.params.companyCreditScore || 0;
         },
         mounted() {
-            console.log(window.location.href);
             // 获取code方法只有在mounted里面可以获取
             if (window.location.href.indexOf('code') != -1) {
+                this.getOrderNo();
                 this.code = this.getQueryString('code');
                 this.getOpenId(this.code);
 
@@ -189,27 +189,64 @@
                 }
             }
             // h5支付成功，查询订单
-            if(window.location.href.indexOf('wxback') != -1){
+            if (window.location.href.indexOf('wxback') != -1) {
                 let self = this;
                 this.currentTabPage = 2;
                 this.$store.commit('SET_CURRENT_TAB_PAGE', 2);
-
+                let out_trade_no = window.localStorage.getItem('out_order_no');
+                console.log(out_trade_no);
                 this.$vux.confirm.show({
                     title: '确认支付结果',
                     'confirm-text': '己完成支付',
                     'cancel-text': '支付遇到问题',
-                    onCancel : () => {
-                        self.$vux.confirm.hide();
+                    onCancel: () => {
+                        self.axios.get('/api/pay/wx_pay/orderQuery?out_trade_no=' + out_trade_no)
+                            .then(data => {
+                                console.log(data.data.return_code[0]);
+                                if (data.data.return_code[0] == 'SUCCESS') {
+                                    this.backOrder({
+                                        orderNo: data.data.out_trade_no[0],
+                                        payNo: data.data.transaction_id[0] || '',
+                                        status: data.data.trade_state[0],
+                                        succTime: data.data.time_end[0] || ''
+                                    });
+                                    console.log({
+                                        orderNo: data.data.out_trade_no[0],
+                                        payNo: data.data.transaction_id[0] || '',
+                                        status: data.data.trade_state[0],
+                                        succTime: data.data.time_end[0] || ''
+                                    });
+                                    // self.$router.push({
+                                    //     name: 'loan'
+                                    // });
+                                } else {
+                                    self.toast(data.data.msg);
+                                }
+                                self.$vux.confirm.hide();
+                            })
+                        // self.$vux.confirm.hide();
                     },
-                    onConfirm : () => {
-                        self.axios.get('/api/pay/wx_pay/orderQuery?out_trade_no='+ this.out_trade_no)
+                    onConfirm: () => {
+                        self.axios.get('/api/pay/wx_pay/orderQuery?out_trade_no=' + out_trade_no)
                             .then(data => {
                                 console.log(data);
-                                if(data.data.code == 200){
+                                if (data.data.return_code[0] == 'SUCCESS') {
+                                    this.backOrder({
+                                        orderNo: data.data.out_trade_no[0],
+                                        payNo: data.data.transaction_id[0] || '',
+                                        status: data.data.trade_state[0],
+                                        succTime: data.data.time_end[0] || ''
+                                    });
+                                    console.log({
+                                        orderNo: data.data.out_trade_no[0],
+                                        payNo: data.data.transaction_id[0] || '',
+                                        status: data.data.trade_state[0],
+                                        succTime: data.data.time_end[0] || ''
+                                    });
                                     self.$router.push({
                                         name: 'loan'
                                     });
-                                }else{
+                                } else {
                                     self.toast(data.data.msg);
                                 }
                                 self.$vux.confirm.hide();
@@ -235,6 +272,50 @@
                 this.currentTabPage = 2;
             },
 
+            getOrderNo() {
+                this.axios.post(public_methods.api.wechatAddOrder, {
+                    amount: this.payMoney,
+                    source: 6
+                }).then(res => {
+                    let data = res.data;
+                    if (data.errorCode == 0) {
+                        this.out_trade_no = data.data;
+                        if(window.localStorage.getItem('out_order_no')){
+                            window.localStorage.removeItem('out_order_no');
+                            window.localStorage.setItem('out_order_no', data.data);
+                        }else{
+                            window.localStorage.setItem('out_order_no', data.data);
+                        }
+
+                        let ua = navigator.userAgent.toLowerCase();//获取判断用的对象
+                        if (ua.match(/MicroMessenger/i) != "micromessenger") {
+                            this.h5pay();
+                        }
+                    } else {
+                        this.toast(data.message);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });
+            },
+            backOrder(opts) {
+                this.axios.post(public_methods.api.wechatBackOrder, {
+                    orderNo: opts.orderNo,
+                    payNo: opts.payNo,
+                    status: opts.status,
+                    succTime: opts.succTime
+                }).then(res => {
+                    let data = res.data;
+                    console.log(data);
+                    if (data.errorCode == 0) {
+                        console.log(data.message);
+                    } else {
+                        this.toast(data.message);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });
+            },
             pay() {
                 if (!this.agreementIt) {
                     this.toast('您必须同意本台提供的服务');
@@ -244,6 +325,7 @@
                     this.toast('请择支付方式');
                     return;
                 }
+
                 let ua = navigator.userAgent.toLowerCase();//获取判断用的对象
                 if (ua.match(/MicroMessenger/i) == "micromessenger") {
                     // 获取wx code： 公众号支付必须
@@ -255,7 +337,8 @@
 
                     window.location.href = url;
                 } else {
-                    this.h5pay();
+                    this.getOrderNo();
+                    // this.h5pay();
                 }
             },
             h5pay() {
@@ -263,7 +346,7 @@
                 let body = '咨询服务费-' + this.payMoney; // 描述
                 let total_fee = this.payMoney;
                 let out_trade_no = this.out_trade_no;
-                let redirect_url = encodeURIComponent(public_methods.url.domain + '/#/step/credit?wxback=true');
+                let redirect_url = encodeURIComponent(public_methods.url.domain + '/#/step/credit?wxback=true&out_trade_no=' + out_trade_no);
                 this.axios.get(`/api/pay/wx_pay/create_h5_pay?attach=${attach}&body=${body}&total_fee=${total_fee}&out_trade_no=${out_trade_no}`).then(
                     res => {
                         let data = res.data;
@@ -287,7 +370,7 @@
                 let total_fee = this.payMoney;
                 let out_trade_no = this.out_trade_no;
 
-                this.axios.get('/api/pay/wx_pay/order?openid=' + openid + '&attach=' + attach + '&body=' + body + '&total_fee=' + total_fee+'&out_trade_no=' + out_trade_no).then(
+                this.axios.get('/api/pay/wx_pay/order?openid=' + openid + '&attach=' + attach + '&body=' + body + '&total_fee=' + total_fee + '&out_trade_no=' + out_trade_no).then(
                     res => {
                         let data = res.data;
                         new wexinPay(data).then((data) => {
@@ -295,18 +378,53 @@
                                 title: '确认支付结果',
                                 'confirm-text': '己完成支付',
                                 'cancel-text': '支付遇到问题',
-                                onCancel : () => {
-                                    self.$vux.confirm.hide();
-                                },
-                                onConfirm : () => {
-                                    self.axios.get('/api/pay/wx_pay/public/orderQuery?out_trade_no='+ this.out_trade_no)
+                                onCancel: () => {
+                                    self.axios.get('/api/pay/wx_pay/public/orderQuery?out_trade_no=' + this.out_trade_no)
                                         .then(data => {
                                             console.log(data);
-                                            if(data.data.code == 200){
+                                            if (data.data.return_code[0] == 'SUCCESS') {
+                                                this.backOrder({
+                                                    orderNo: data.data.out_trade_no[0],
+                                                    payNo: data.data.transaction_id[0] || '',
+                                                    status: data.data.trade_state[0],
+                                                    succTime: data.data.time_end[0] || ''
+                                                });
+                                                console.log({
+                                                    orderNo: data.data.out_trade_no[0],
+                                                    payNo: data.data.transaction_id[0] || '',
+                                                    status: data.data.trade_state[0],
+                                                    succTime: data.data.time_end[0] || ''
+                                                });
+                                                // self.$router.push({
+                                                //     name: 'loan'
+                                                // });
+                                            } else {
+                                                self.toast(data.data.msg);
+                                            }
+                                            self.$vux.confirm.hide();
+                                        })
+                                },
+                                onConfirm: () => {
+                                    self.axios.get('/api/pay/wx_pay/public/orderQuery?out_trade_no=' + this.out_trade_no)
+                                        .then(data => {
+                                            console.log(data);
+                                            if (data.data.return_code[0] == 'SUCCESS') {
+                                                this.backOrder({
+                                                    orderNo: data.data.out_trade_no[0],
+                                                    payNo: data.data.transaction_id[0] || '',
+                                                    status: data.data.trade_state[0],
+                                                    succTime: data.data.time_end[0] || ''
+                                                });
+                                                console.log({
+                                                    orderNo: data.data.out_trade_no[0],
+                                                    payNo: data.data.transaction_id[0] || '',
+                                                    status: data.data.trade_state[0],
+                                                    succTime: data.data.time_end[0] || ''
+                                                });
                                                 self.$router.push({
                                                     name: 'loan'
                                                 });
-                                            }else{
+                                            } else {
                                                 self.toast(data.data.msg);
                                             }
                                             self.$vux.confirm.hide();
@@ -359,6 +477,7 @@
                 }
             }
         },
+
         components: {
             XCircle, SwiperItem, Swiper, CheckIcon,
             'v-service': service,

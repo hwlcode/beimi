@@ -103,15 +103,15 @@
             }
         },
         created() {
-            if(window.sessionStorage.getItem('user')){
+            if(window.localStorage.getItem('user')){
                 this.isLogin = true;
                 this.showCompanyInfo = true;
+                this.getCompanyInfo();
+                this.getCompanyOperate();
             }else{
                 this.isLogin = false;
                 this.showCompanyInfo = true;
             }
-            this.getCompanyInfo();
-            this.getCompanyOperate();
         },
         mounted() {
 
@@ -201,13 +201,20 @@
                     .then(response => {
                         let data = response.data;
                         if (data.errorCode === 0) {
-                            this.$router.push({
-                                name: 'credit',
-                                params: {
-                                    companyCreditScore: this.companyCreditScore || 0,
-                                }
-                            });
-                            this.$store.commit('SET_CURRENT_TAB_PAGE', 2);
+                            if(window.localStorage.getItem('identifyCode')){
+                                this.$router.push({
+                                    name: 'loan'
+                                });
+                                this.$store.commit('SET_CURRENT_TAB_PAGE',4);
+                            }else{
+                                this.$router.push({
+                                    name: 'credit',
+                                    params: {
+                                        companyCreditScore: this.companyCreditScore || 0,
+                                    }
+                                });
+                                this.$store.commit('SET_CURRENT_TAB_PAGE', 2);
+                            }
                         }
                     })
                     .catch(error => {
@@ -223,9 +230,11 @@
                                 this.companyName = data.data.companyName;
                                 this.companySocialCreditCode = data.data.companySocialCreditCode;
                                 this.companyBusinessAddress = data.data.companyBusinessAddress;
-                                this.selectedCity.push(data.data.provinceCode + '');
-                                this.selectedCity.push(data.data.cityCode + '');
-                                this.selectedCity.push(data.data.areaCode + '');
+                                if(data.data.provinceCode != null){
+                                    this.selectedCity.push(data.data.provinceCode + '');
+                                    this.selectedCity.push(data.data.cityCode + '');
+                                    this.selectedCity.push(data.data.areaCode + '');
+                                }
                             } else {
                                 this.toast(data.message);
                             }
@@ -240,7 +249,7 @@
                     this.axios.get(public_methods.api.getCompanyOperate)
                         .then(res => {
                             let data = res.data;
-                            if (data.errorCode == 0) {
+                            if (data.errorCode == 0 && data.data.companyCreditScore != null) {
                                 this.companyCreditScore = data.data.companyCreditScore;
                                 this.companyFoundYears.push(data.data.companyFoundYears + '');
                                 this.companyAnnualTax.push(data.data.companyAnnualTax + '');

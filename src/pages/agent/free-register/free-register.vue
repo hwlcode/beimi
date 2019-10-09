@@ -1,5 +1,5 @@
 <template>
-    <div class="register">
+    <div class="free-register">
         <div class="a-header">注册</div>
         <div class="user-info">
             <group title="您的姓名" label-width="0" label-align="right">
@@ -36,11 +36,9 @@
 <script type="text/ecmascript-6">
     import {Flexbox, FlexboxItem} from 'vux';
     import {public_methods} from '../../../assets/js/public_method';
-
     let PHONE_REGX = /^(1[3-9])\d{9}$/;
-
     export default {
-        name: "register",
+        name: "free-register",
         data() {
             return {
                 name: '',
@@ -51,7 +49,7 @@
                 second: 60,
                 identifyCode: '',
                 roleType: null,
-                channel: ''
+                channel: '',
             }
         },
         mounted() {
@@ -70,18 +68,18 @@
                     this.toast('请输入验证码');
                     return;
                 }
-                let url = public_methods.api.agentRegister;
-                this.axios.get(url + '?phone=' + this.phone + '&name=' + this.name + '&verifyCode=' + this.verifyCode + '&identifyCode=' + this.identifyCode + '&roleType=' + this.roleType + '&channel=' + this.channel)
+                let url = public_methods.api.freeRegister;
+                this.axios.get(url + '?phone=' + this.phone + '&name=' + this.name + '&verifyCode='+this.verifyCode + '&identifyCode=' + this.identifyCode + '&roleType=' + this.roleType + '&channel='+ this.channel)
                     .then(response => {
-                        let data = response.data;
-                        if (data.errorCode === 0) {
+                        let data= response.data;
+                        if(data.errorCode === 0){
                             // 存储token
                             // this.$store.commit('LOGIN', data.data.token);
                             // this.$store.commit('SET_USER_ID', data.data.id);
                             // this.$store.commit('SET_LOGIN_USER_PHONE', data.data.phone);
-                            // this.toast('注册成功！我们会尽快安排工作人员与您联系！')
-                            this.$router.push('/agent/user/pay');
-                        } else {
+                            this.toast('注册成功！我们会尽快安排工作人员与您联系！')
+                            // this.$router.push('/login');
+                        }else{
                             this.toast(data.message);
                         }
                     })
@@ -98,7 +96,7 @@
                     return;
                 }
                 this.axios.get(public_methods.api.registerVerifyCod + '?phone=' + this.phone).then(data => {
-                    if (data.data.errorCode == 0) {
+                    if(data.data.errorCode == 0){
                         this.sending = false;
                         this.disabled = true;
                         let result = setInterval(() => {
@@ -110,7 +108,7 @@
                                 this.second = 60;
                             }
                         }, 1000);
-                    } else {
+                    }else{
                         this.toast(data.data.message);
                     }
 
@@ -123,20 +121,6 @@
                     width: '80%',
                     position: 'top'
                 });
-            },
-            getQueryString(name) {
-                let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-                let reg_rewrite = new RegExp("(^|/)" + name + "/([^/]*)(/|$)", "i");
-                let r = window.location.search.substr(1).match(reg);
-                console.log(window.location);
-                let q = window.location.pathname.substr(1).match(reg_rewrite);
-                if (r != null) {
-                    return unescape(r[2]);
-                } else if (q != null) {
-                    return unescape(q[2]);
-                } else {
-                    return null;
-                }
             }
         },
         components: {
@@ -146,34 +130,22 @@
 </script>
 
 <style lang="less" scoped>
-    .register {
-        .a-header {
+    .free-register {
+        .a-header{
             background: rgb(84, 107, 224);
-            color: #fff;
-            font-size: 18px;
-            text-align: center;
-            line-height: 45px;
+            color: #fff; font-size: 18px; text-align: center; line-height: 45px;
         }
-
         .phone-code {
             font-size: 13px;
             color: #5369E8;
             border: 1px #DCDCDC solid;
         }
-
-        .fl-box {
+        .fl-box{
             display: flex;
-            padding: 0 20px 20px 20px;
-            margin-top: 30px;
+            padding: 0 20px 20px 20px; margin-top: 30px;
         }
-
-        .back-home {
-            height: 42px;
-            width: 150px;
-            margin-top: 15px;
-            border: 1px #BFBFBF solid;
-            overflow: hidden;
-            color: #646464;
+        .back-home{
+            height: 42px; width: 150px; margin-top: 15px; border: 1px #BFBFBF solid; overflow: hidden; color: #646464;
         }
     }
 </style>

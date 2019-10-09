@@ -4,7 +4,8 @@
             <h4>立即获取<br/>您的小企业贷款</h4>
             <div>
                 <input type="text" placeholder="￥你需要多少钱？" v-model="needMoney">
-                <a class="common-small-bth" @click.stop="checkLogin">开始</a>
+                <router-link class="common-small-bth" to="/step">开始</router-link>
+<!--                <a class="common-small-bth" @click.stop="checkLogin">开始</a>-->
             </div>
             <dl>
                 <dt>申请是免费的，不会影响您的信用</dt>
@@ -24,7 +25,7 @@
             }
         },
         created(){
-            if(window.sessionStorage.getItem('user')){
+            if(window.localStorage.getItem('user')){
                 this.isLogin = true
             }
         },
@@ -33,7 +34,7 @@
                 this.$store.commit('SET_NEED_MONEY', this.needMoney || 0);
             },
             checkLogin(){
-                if(window.sessionStorage.getItem('user')){
+                if(window.localStorage.getItem('user')){
                     this.$router.push({path: '/step'});
                 }else{
                     this.$router.push({path: '/login'});

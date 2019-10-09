@@ -7,7 +7,8 @@
                 <h4>大数据匹配 方案定制 快速获得资金</h4>
                 <div>
                     <input type="text" placeholder="￥您需要多少钱？" v-model="needMoney">
-                    <a class="common-small-bth need-money-btn" @click.stop="checkLogin">获取方案</a>
+                    <router-link class="common-small-bth need-money-btn" to="/step">获取方案</router-link>
+<!--                    <a class="common-small-bth need-money-btn">获取方案</a>-->
                 </div>
             </div>
         </div>
@@ -64,7 +65,7 @@
             }
         },
         created(){
-          if(window.sessionStorage.getItem('user')){
+          if(window.localStorage.getItem('user')){
               this.isLogin = true;
           }
         },
@@ -76,7 +77,7 @@
                 this.$store.commit('SET_NEED_MONEY', this.needMoney || 0);
             },
             checkLogin(){
-                if(window.sessionStorage.getItem('user')){
+                if(window.localStorage.getItem('user')){
                     this.$router.push('/step');
                 }else{
                     this.$router.push('/login');

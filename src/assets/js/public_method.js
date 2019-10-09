@@ -27,7 +27,14 @@ export let public_methods = {
         joinApplication: '/v1/api/user/add/joinApplication', // 申请加盟
 
         agentRegister: '/v1/web/agent/register', // 个人代理注册
+        freeRegister: '/v1/web/agent/freeRegister', // 城代代理注册
         agentLogin: '/v1/web/agent/login', // 个人代理登录
+
+        recommand: '/v1/api/user/recommand', // 贷款申请
+
+        wechatAddOrder: '/v1/api/order/addOrder', // 生成微信支付订单
+        wechatBackOrder: '/v1/api/order/backOrder', // 微付回调回传给后台的数据
+        addFreeOrder: '/v1/api/order/addFreeOrder', // 普通贷款用户免费订单
     },
     url: {
         domain: 'http://beimi.welcometo5g.cn'

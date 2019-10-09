@@ -100,13 +100,13 @@
             }
         },
         created(){
-            if(window.sessionStorage.getItem('user')){
+            if(window.localStorage.getItem('user')){
                 this.isLogin = true
             }
         },
         methods: {
             checkLogin(){
-                if(window.sessionStorage.getItem('user')){
+                if(window.localStorage.getItem('user')){
                     this.$router.push('/step');
                 }else{
                     this.$router.push('/login');

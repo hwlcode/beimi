@@ -4,13 +4,16 @@
         <h3>您需要多少钱？</h3>
         <checker class="select-list" v-model="moneyValue" default-item-class="select-item"
                  selected-item-class="select-item-selected">
-            <checker-item :disabled="disabled" v-for="(item, index) in moneyList" :value="item.value" :key="index">{{item.text}}
+            <checker-item :disabled="disabled" v-for="(item, index) in moneyList" :value="item.value" :key="index">
+                {{item.text}}
             </checker-item>
         </checker>
         <h3>需要筹集资金的目的是什么？</h3>
         <checker class="select-list" v-model="aimValue" default-item-class="select-item"
                  selected-item-class="select-item-selected">
-            <checker-item :disabled="disabled" v-for="(item, index) in aimList" :value="item.value" :key="index">{{item.text}}</checker-item>
+            <checker-item :disabled="disabled" v-for="(item, index) in aimList" :value="item.value" :key="index">
+                {{item.text}}
+            </checker-item>
         </checker>
         <div style="padding: 0 20px 20px 20px;">
             <x-button :gradients="['#546BE0', '#546BE0']" @click.native="handleNextStep"
@@ -18,10 +21,10 @@
                 下一步
             </x-button>
 
-<!--            <x-button :gradients="['#546BE0', '#546BE0']" @click.native="testPay"-->
-<!--                      style="border-radius:99px; margin-top: 80px;">-->
-<!--                测试支付-->
-<!--            </x-button>-->
+            <!--            <x-button :gradients="['#546BE0', '#546BE0']" @click.native="testPay"-->
+            <!--                      style="border-radius:99px; margin-top: 80px;">-->
+            <!--                测试支付-->
+            <!--            </x-button>-->
         </div>
     </div>
 </template>
@@ -87,11 +90,28 @@
                         value: 6,
                     }
                 ],
-                disabled: false
+                disabled: false,
+                identifyCode: '',
+                channel: '',
             }
         },
         created() {
-            if(!window.sessionStorage.getItem('user')) {
+            this.identifyCode = this.$route.query.identifyCode;
+            this.channel = this.$route.query.channel;
+
+            if (this.identifyCode != undefined) {
+                if (window.localStorage.getItem('identifyCode')) {
+                    window.localStorage.removeItem('identifyCode');
+                    window.localStorage.setItem('identifyCode', this.identifyCode);
+                } else {
+                    window.localStorage.setItem('identifyCode', this.identifyCode);
+                }
+                this.addFreeOrder();
+            } else {
+                window.localStorage.removeItem('identifyCode');
+            }
+            // console.log(this.identifyCode, this.channel);
+            if (!window.localStorage.getItem('user')) {
                 let money = parseInt(this.$store.state.needMoney, 10);
                 if (money > 0 && money <= 1000) {
                     this.moneyValue = 1;
@@ -124,17 +144,37 @@
                 } else {
                     this.$router.push({
                         name: 'information',
-                        params: {moneyValue: this.moneyValue, aimValue: this.aimValue}
+                        params: {
+                            moneyValue: this.moneyValue,
+                            aimValue: this.aimValue,
+                            identifyCode: this.identifyCode,
+                            channel: this.channel
+                        }
                     });
                 }
             },
-            testPay(){
+            testPay() {
                 this.$router.push({
                     name: 'pay'
                 });
             },
+            addFreeOrder(){
+                this.axios.post(public_methods.api.addFreeOrder, {
+                    agentIdentifyCode: this.identifyCode
+                }).then(res => {
+                        let data = res.data;
+                        if (data.errorCode == 0) {
+                            console.log(data);
+                        } else {
+                            toast(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            },
             getLoan() {
-                if(window.sessionStorage.getItem('user')){
+                if (window.localStorage.getItem('user')) {
                     this.axios.get(public_methods.api.loan)
                         .then(res => {
                             let data = res.data;

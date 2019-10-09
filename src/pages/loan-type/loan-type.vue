@@ -10,7 +10,8 @@
                 <div class="right">
                     <p>让我们开始吧</p>
                     <input type="text" placeholder="￥你需要多少钱？" class="money">
-                    <a class="common-small-bth" @click.stop="checkLogin">查看你的选择</a>
+                    <router-link class="common-small-bth" to="/step">查看你的选择</router-link>
+<!--                    <a class="common-small-bth" @click.stop="checkLogin">查看你的选择</a>-->
                 </div>
             </div>
             <div class="cate">
@@ -113,7 +114,7 @@
             }
         },
         created(){
-            if(window.sessionStorage.getItem('user')){
+            if(window.localStorage.getItem('user')){
                 this.isLogin = true;
             }
         },
@@ -124,7 +125,7 @@
         },
         methods: {
             checkLogin(){
-                if(window.sessionStorage.getItem('user')){
+                if(window.localStorage.getItem('user')){
                     this.$router.push('/step');
                 }else{
                     this.$router.push('/login');

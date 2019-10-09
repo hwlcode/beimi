@@ -236,7 +236,7 @@
              wages: 3 // 工资
              */
             getProductList(page = this.page, pageSize = PAGESIZE, cardType='', recommendStatus = 1) {
-                this.axios.post(public_methods.api.productList + '?page=' + page + '&pageSize=' + pageSize + '&cardType=' + cardType + '&recommendStatus=' + recommendStatus).then(
+                this.axios.post(public_methods.api.productList + '?page=' + page + '&pageSize=' + pageSize + '&cardType=' + cardType + '&recommendStatus=' + recommendStatus + '&productType=0').then(
                     response => {
                         let data = response.data;
                         if (data.errorCode === 0) {

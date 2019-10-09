@@ -1,5 +1,6 @@
 <template>
     <div class="pay">
+        <div class="a-header">充值</div>
         <div style="padding: 0 10px 20px 10px; margin-top: 30px;">
             <h2>选择充值金额</h2>
             <div class="tab">
@@ -119,15 +120,17 @@
             </div>
             <div class="pay-way">
                 <div class="title">选择支付方式：</div>
-                <div class="pay-item"><check-icon :value.sync="payWay">微信支付</check-icon></div>
-<!--                <div class="pay-item"><input type="radio" name="pay-way" v-model="payway" value="2"> 银行卡支付</div>-->
+                <div class="pay-item">
+                    <check-icon :value.sync="payWay">微信支付</check-icon>
+                </div>
+                <!--                <div class="pay-item"><input type="radio" name="pay-way" v-model="payway" value="2"> 银行卡支付</div>-->
             </div>
             <x-button :gradients="['#546BE0', '#546BE0']"
                       style="border-radius:99px; margin-top: 20px;" @click.native="pay">充值
             </x-button>
-<!--            <x-button :gradients="['#546BE0', '#546BE0']" @click.native="scanQRCode"-->
-<!--                      style="border-radius:99px; margin-top: 20px;" id="scanQRCode">扫码支付-->
-<!--            </x-button>-->
+            <!--            <x-button :gradients="['#546BE0', '#546BE0']" @click.native="scanQRCode"-->
+            <!--                      style="border-radius:99px; margin-top: 20px;" id="scanQRCode">扫码支付-->
+            <!--            </x-button>-->
             <p class="agreement">
                 充值即同意
                 <router-link to="/">《合作协议》</router-link>
@@ -140,10 +143,10 @@
 </template>
 
 <script type="text/ecmascript-6">
-    import service from '../../../components/service/service';
+    import service from '../../components/service/service';
     import {XTable, CheckIcon} from 'vux';
-    import {wexinPay} from '../../../wechat/wechaty.js';
-    import {public_methods, toast} from '../../../assets/js/public_method';
+    import {wexinPay} from '../../wechat/wechaty.js';
+    import {public_methods, toast} from '../../assets/js/public_method';
 
     export default {
         name: "pay",
@@ -154,7 +157,7 @@
                 payWay: true,
                 code: null,
                 openId: null,
-                out_trade_no: `BM${ new Date().getTime() }` // 正式的时候需要修改
+                out_trade_no: `BM${new Date().getTime()}` // 正式的时候需要修改
             }
         },
         created() {
@@ -163,26 +166,65 @@
         mounted() {
             // 获取code方法只有在mounted里面可以获取
             if (window.location.href.indexOf('code') != -1) {
+                this.getOrderNo(false);
                 this.code = this.getQueryString('code');
                 this.getOpenId(this.code);
             }
             // h5支付成功，查询订单
-            if(window.location.href.indexOf('wxback') != -1){
+            if (window.location.href.indexOf('wxback') != -1) {
                 let self = this;
                 this.$vux.confirm.show({
                     title: '确认支付结果',
                     'confirm-text': '己完成支付',
                     'cancel-text': '支付遇到问题',
-                    onCancel : () => {
-                        self.$vux.confirm.hide();
-                    },
-                    onConfirm : () => {
-                        self.axios.get('/api/pay/wx_pay/orderQuery?out_trade_no='+ this.out_trade_no)
+                    onCancel: () => {
+                        self.axios.get('/api/pay/wx_pay/orderQuery?out_trade_no=' + this.out_trade_no)
                             .then(data => {
-                                console.log(data);
-                                if(data.data.code == 200){
+                                console.log(data.data.return_code[0]);
+                                if (data.data.return_code[0] == 'SUCCESS') {
+                                    this.backOrder({
+                                        orderNo: data.data.out_trade_no[0],
+                                        payNo: data.data.transaction_id[0] || '',
+                                        status: data.data.trade_state[0],
+                                        succTime: data.data.time_end[0] || ''
+                                    });
+                                    console.log({
+                                        orderNo: data.data.out_trade_no[0],
+                                        payNo: data.data.transaction_id[0] || '',
+                                        status: data.data.trade_state[0],
+                                        succTime: data.data.time_end[0] || ''
+                                    });
+                                    // self.$router.push({
+                                    //     name: 'loan'
+                                    // });
+                                } else {
+                                    self.toast(data.data.msg);
+                                }
+                                self.$vux.confirm.hide();
+                            })
+                    },
+                    onConfirm: () => {
+                        self.axios.get('/api/pay/wx_pay/orderQuery?out_trade_no=' + this.out_trade_no)
+                            .then(data => {
+                                console.log(data.data.return_code[0]);
+                                if (data.data.return_code[0] == 'SUCCESS') {
+                                    this.backOrder({
+                                        orderNo: data.data.out_trade_no[0],
+                                        payNo: data.data.transaction_id[0] || '',
+                                        status: data.data.trade_state[0],
+                                        succTime: data.data.time_end[0] || ''
+                                    });
+                                    console.log({
+                                        orderNo: data.data.out_trade_no[0],
+                                        payNo: data.data.transaction_id[0] || '',
+                                        status: data.data.trade_state[0],
+                                        succTime: data.data.time_end[0] || ''
+                                    });
+                                    // self.$router.push({
+                                    //     name: 'loan'
+                                    // });
                                     self.toast('充值成功');
-                                }else{
+                                } else {
                                     self.toast(data.data.msg);
                                 }
                                 self.$vux.confirm.hide();
@@ -233,7 +275,7 @@
                 let body = '充值-' + this.payMoney; // 描述
                 let total_fee = 0.01;
                 let out_trade_no = this.out_trade_no;
-                let redirect_url = encodeURIComponent(public_methods.url.domain + '/#/step/pay?wxback=true');
+                let redirect_url = encodeURIComponent(public_methods.url.domain + '/#/agent/user/pay?wxback=true');
                 this.axios.get(`/api/pay/wx_pay/create_h5_pay?attach=${attach}&body=${body}&total_fee=${total_fee}&out_trade_no=${out_trade_no}`).then(
                     res => {
                         let data = res.data;
@@ -249,6 +291,27 @@
                     }
                 )
             },
+            getOrderNo(status) {
+                this.axios.post(public_methods.api.wechatAddOrder, {
+                    amount: this.payMoney,
+                    source: 4
+                }).then(res => {
+                    let data = res.data;
+                    console.log(data.data);
+                    if (data.errorCode == 0) {
+                        if (status) {
+                            this.out_trade_no = data.data;
+                            this.h5pay()
+                        } else {
+                            this.out_trade_no = data.data;
+                        }
+                    } else {
+                        this.toast(data.message);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });
+            },
             payOurMoney() {
                 let self = this;
                 let openid = this.openId;
@@ -257,7 +320,7 @@
                 let total_fee = 0.01;
                 let out_trade_no = this.out_trade_no;
 
-                this.axios.get('/api/pay/wx_pay/order?openid=' + openid + '&attach=' + attach + '&body=' + body + '&total_fee=' + total_fee+'&out_trade_no=' + out_trade_no).then(
+                this.axios.get('/api/pay/wx_pay/order?openid=' + openid + '&attach=' + attach + '&body=' + body + '&total_fee=' + total_fee + '&out_trade_no=' + out_trade_no).then(
                     res => {
                         let data = res.data;
                         new wexinPay(data).then((data) => {
@@ -265,16 +328,55 @@
                                 title: '确认支付结果',
                                 'confirm-text': '己完成支付',
                                 'cancel-text': '支付遇到问题',
-                                onCancel : () => {
-                                    self.$vux.confirm.hide();
-                                },
-                                onConfirm : () => {
-                                    self.axios.get('/api/pay/wx_pay/public/orderQuery?out_trade_no='+ this.out_trade_no)
+                                onCancel: () => {
+                                    self.axios.get('/api/pay/wx_pay/public/orderQuery?out_trade_no=' + this.out_trade_no)
                                         .then(data => {
-                                            console.log(data);
-                                            if(data.data.code == 200){
+                                            console.log(data.data.return_code[0]);
+                                            if (data.data.return_code[0] == 'SUCCESS') {
+                                                this.backOrder({
+                                                    orderNo: data.data.out_trade_no[0],
+                                                    payNo: data.data.transaction_id[0] || '',
+                                                    status: data.data.trade_state[0],
+                                                    succTime: data.data.time_end[0] || ''
+                                                });
+                                                console.log({
+                                                    orderNo: data.data.out_trade_no[0],
+                                                    payNo: data.data.transaction_id[0] || '',
+                                                    status: data.data.trade_state[0],
+                                                    succTime: data.data.time_end[0] || ''
+                                                });
+                                                // self.$router.push({
+                                                //     name: 'loan'
+                                                // });
+                                                // self.toast('充值成功');
+                                            } else {
+                                                self.toast(data.data.msg);
+                                            }
+                                            self.$vux.confirm.hide();
+                                        })
+                                },
+                                onConfirm: () => {
+                                    self.axios.get('/api/pay/wx_pay/public/orderQuery?out_trade_no=' + this.out_trade_no)
+                                        .then(data => {
+                                            console.log(data.data.return_code[0]);
+                                            if (data.data.return_code[0] == 'SUCCESS') {
+                                                this.backOrder({
+                                                    orderNo: data.data.out_trade_no[0],
+                                                    payNo: data.data.transaction_id[0] || '',
+                                                    status: data.data.trade_state[0],
+                                                    succTime: data.data.time_end[0] || ''
+                                                });
+                                                console.log({
+                                                    orderNo: data.data.out_trade_no[0],
+                                                    payNo: data.data.transaction_id[0] || '',
+                                                    status: data.data.trade_state[0],
+                                                    succTime: data.data.time_end[0] || ''
+                                                });
+                                                // self.$router.push({
+                                                //     name: 'loan'
+                                                // });
                                                 self.toast('充值成功');
-                                            }else{
+                                            } else {
                                                 self.toast(data.data.msg);
                                             }
                                             self.$vux.confirm.hide();
@@ -325,6 +427,14 @@
             color: #000;
             font-weight: 700;
             margin: 20px 0;
+        }
+
+        .a-header {
+            background: rgb(84, 107, 224);
+            color: #fff;
+            font-size: 18px;
+            text-align: center;
+            line-height: 45px;
         }
 
         .tab {

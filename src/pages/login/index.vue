@@ -10,7 +10,7 @@
             </group>
             <group title="手机验证码" label-width="0" label-align="right" class="l-form-title">
                 <div class="flex">
-                    <x-input title="" placeholder="请输入手机验证码" class="flex-box-item" v-model="mobileCode"></x-input>
+                    <x-input title="" placeholder="请输入手机验证码" class="flex-box-item" :max="6" v-model="mobileCode"></x-input>
                     <x-button class="code-btn" type="default" plain @click.native="getPhoneCode">
                         <span v-if="sending">获取验证码</span>
                         <span v-if="!sending">{{second}}秒后重发</span>
@@ -90,9 +90,10 @@
                             }
                             if (data.errorCode === 1052) {
                                 this.toast('手机号码未注册，请先注册');
-                            } else {
-                                this.toast(data.message);
                             }
+                            // else {
+                            //     this.toast(data.message);
+                            // }
                         }).catch(e => {
                     this.toast(e);
                 });
@@ -122,24 +123,45 @@
                             this.$store.commit('LOGIN', data.data.token);
                             this.$store.commit('SET_USER_ID', data.data.id);
                             this.$store.commit('SET_LOGIN_USER_PHONE', data.data.phone);
+                            this.$store.commit('SET_NAME', data.data.name);
 
-                            if (window.sessionStorage.getItem('user')) {
-                                window.sessionStorage.removeItem('user');
-                                window.sessionStorage.setItem('user', JSON.stringify(data.data));
-                                window.sessionStorage.setItem('token', JSON.stringify(data.data.token));
+                            if (window.localStorage.getItem('user')) {
+                                window.localStorage.removeItem('user');
+                                window.localStorage.setItem('user', JSON.stringify(data.data));
+                                window.localStorage.setItem('token', JSON.stringify(data.data.token));
                             }else{
-                                window.sessionStorage.setItem('user', JSON.stringify(data.data));
-                                window.sessionStorage.setItem('token', JSON.stringify(data.data.token));
+                                window.localStorage.setItem('user', JSON.stringify(data.data));
+                                window.localStorage.setItem('token', JSON.stringify(data.data.token));
                             }
+                            this.hasReview();
                             // console.log(this.$store);
-                            this.$router.push({
-                                path: '/'
-                            });
+                            // this.$router.push({
+                            //     path: '/step'
+                            // });
                         }
                         if (data.errorCode === 1052) {
                             this.toast('手机号码未注册，请先注册');
                         } else if (data.message == null) {
                             this.toast('登录成功！');
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    });
+            },
+            hasReview() {
+                this.axios.get(public_methods.api.hasReview).then(
+                    response => {
+                        let data = response.data;
+                        if (data.data) {
+                            this.$router.push({
+                                name: 'loan'
+                            });
+                            this.$store.commit('SET_CURRENT_TAB_PAGE', 4);
+                        } else {
+                            this.$router.push({
+                                name: 'demand'
+                            });
                         }
                     })
                     .catch(error => {

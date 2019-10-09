@@ -13,7 +13,7 @@
             <group title="短信验证码" label-width="0" label-align="right" v-show="!isLogin">
                 <Flexbox>
                     <FlexboxItem>
-                        <x-input title="" placeholder="请输入短信验证码" v-model="phoneCode" type="text"></x-input>
+                        <x-input title="" placeholder="请输入短信验证码" v-model="phoneCode" :max="6" type="text"></x-input>
                     </FlexboxItem>
                     <FlexboxItem :span="4">
                         <x-button plain class="phone-code" @click.native="getPhoneCode" :disabled="disabled">
@@ -159,7 +159,7 @@
             }
         },
         created() {
-            if(window.sessionStorage.getItem('user')){
+            if(window.localStorage.getItem('user')){
                 this.isLogin = true;
                 this.showUserInfo = true;
             }else{
@@ -191,7 +191,7 @@
 
                 let body = {};
                 let param = this.$route.params;
-                let url = public_methods.api.register + '?verifyCode=' + this.phoneCode;
+                let url = public_methods.api.register + '?verifyCode=' + this.phoneCode + '&identifyCode=' + param.identifyCode + '&channel=' + param.channel;
 
                 body["identityNumber"] = this.identityNumber + '';
                 body["loanAim"] = param.aimValue + '';
@@ -208,7 +208,17 @@
                             this.$store.commit('LOGIN', data.data.token);
                             this.$store.commit('SET_USER_ID', data.data.id);
                             this.$store.commit('SET_LOGIN_USER_PHONE', data.data.phone);
-                            console.log(this.$store);
+                            this.$store.commit('SET_NAME', data.data.name);
+
+                            if (window.localStorage.getItem('user')) {
+                                window.localStorage.removeItem('user');
+                                window.localStorage.setItem('user', JSON.stringify(data.data));
+                                window.localStorage.setItem('token', JSON.stringify(data.data.token));
+                            }else{
+                                window.localStorage.setItem('user', JSON.stringify(data.data));
+                                window.localStorage.setItem('token', JSON.stringify(data.data.token));
+                            }
+
                             this.showUserInfo = false;
                         }else{
                             this.toast(data.message);
@@ -305,6 +315,7 @@
                                 this.identityNumber = data.data.identityNumber;
                                 this.name = data.data.name;
                                 this.phone = data.data.phone;
+                                this.$store.commit('SET_NAME', data.data.name);
                             } else {
                                 toast(data.message);
                             }

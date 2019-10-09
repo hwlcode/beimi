@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        name: 'zzh',
+        name: '',
         night: false,
         fontSize: 18,
         token: null,
@@ -45,23 +45,26 @@ export default new Vuex.Store({
         SET_MOBILE(state, val) {
             state.mobile = val;
         },
-        SET_NEED_MONEY(state, val){
+        SET_NEED_MONEY(state, val) {
             state.needMoney = val;
         },
-        SET_COMPONY_NAME(state, val){
+        SET_COMPONY_NAME(state, val) {
             state.companyName = val;
         },
-        SET_LOGIN_USER_PHONE(state, val){
+        SET_LOGIN_USER_PHONE(state, val) {
             state.phone = val;
         },
-        SET_URL(state, val){
+        SET_URL(state, val) {
             state.url = val;
         },
-        SET_SHOW_REPORT(state, val){
+        SET_SHOW_REPORT(state, val) {
             state.showReport = val;
         },
-        SET_CURRENT_TAB_PAGE(state, val){
+        SET_CURRENT_TAB_PAGE(state, val) {
             state.currentTabPage = val;
+        },
+        SET_NAME(state, val) {
+            state.name = val;
         }
     },
     actions: {}

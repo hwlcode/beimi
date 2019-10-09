@@ -8,7 +8,9 @@
                          style="display: inline-block; position: absolute;right: 36px; top: 50%; margin-top: -13px; width: 60px; font-size: 13px;">
                         <router-link to="/login" class="common-small-bth logout" v-show="showLogin">登录</router-link>
                     </div>
-                    <x-button class="common-small-bth logout" v-show="isLogin" @click.native="logout" style="right: 40px; margin-top: 0;">退出</x-button>
+                    <x-button class="common-small-bth logout" v-show="isLogin" @click.native="logout"
+                              style="right: 40px; margin-top: 0;">退出
+                    </x-button>
                     <span class="menu" @click="showMenuEvent()"></span>
                 </div>
             </div>
@@ -50,34 +52,36 @@
                     <dl class="menu-item">
                         <dt>
                             <router-link to="/login" @click.native="move()" v-show="!isLogin">登录</router-link>
-                            <p v-show="isLogin">欢迎您，{{loginUserPhone}} <a href="javascript:;" @click.stop="logout" style="font-weight: 700;">退出</a></p>
+                            <p v-show="isLogin">欢迎您，{{loginUserPhone}} <a href="javascript:;" @click.stop="logout"
+                                                                          style="font-weight: 700;">退出</a></p>
                         </dt>
                         <dd><i class="icon"></i></dd>
                     </dl>
                     <dl class="menu-item">
                         <dt>
-                            <router-link to="/login" @click.native="move()">代理登录</router-link>
+                            <router-link to="/agent/register" @click.native="move()">代理注册</router-link>
                         </dt>
                         <dd><i class="icon"></i></dd>
                     </dl>
                     <dl class="menu-item">
                         <dt>
-                            <router-link to="/login" @click.native="move()">获取贷款优惠</router-link>
+                            <router-link to="/step">获取贷款优惠</router-link>
+<!--                            <router-link to="/login" @click.native.stop="getLoan()">获取贷款优惠</router-link>-->
                         </dt>
                         <dd><i class="icon"></i></dd>
                     </dl>
-                    <dl class="menu-item">
-                        <dt>
-                            <router-link to="/step/pay" @click.native="move()">充值</router-link>
-                        </dt>
-                        <dd><i class="icon"></i></dd>
-                    </dl>
-<!--                    <dl class="menu-item">-->
-<!--                        <dt>-->
-<!--                            <router-link to="/step/pay" @click.native="move()">支付测试</router-link>-->
-<!--                        </dt>-->
-<!--                        <dd><i class="icon"></i></dd>-->
-<!--                    </dl>-->
+                    <!--                    <dl class="menu-item">-->
+                    <!--                        <dt>-->
+                    <!--                            <router-link to="/step/pay" @click.native="move()">充值</router-link>-->
+                    <!--                        </dt>-->
+                    <!--                        <dd><i class="icon"></i></dd>-->
+                    <!--                    </dl>-->
+                    <!--                    <dl class="menu-item">-->
+                    <!--                        <dt>-->
+                    <!--                            <router-link to="/step/pay" @click.native="move()">支付测试</router-link>-->
+                    <!--                        </dt>-->
+                    <!--                        <dd><i class="icon"></i></dd>-->
+                    <!--                    </dl>-->
                 </div>
             </div>
         </div>
@@ -102,12 +106,12 @@
                 loginUserPhone: '',
             }
         },
-        created(){
-            if(window.sessionStorage.getItem('user')){
-                let user = JSON.parse(window.sessionStorage.getItem('user'));
+        created() {
+            if (window.localStorage.getItem('user')) {
+                let user = JSON.parse(window.localStorage.getItem('user'));
                 this.isLogin = true;
                 this.loginUserPhone = user['userName']
-            }else{
+            } else {
                 this.isLogin = false;
                 this.loginUserPhone = '';
             }
@@ -133,14 +137,21 @@
                 this.showMenu = false;
                 this.move();
             },
+            getLoan() {
+                if (this.isLogin) {
+                    this.$router.push('/step');
+                } else {
+                    this.$router.push('/login');
+                }
+            },
             logout() {
                 this.axios.post(public_methods.api.logout)
                     .then(response => {
                         let data = response.data;
                         if (data.errorCode == 0) {
                             // 清除token
-                            window.sessionStorage.removeItem('user');
-                            window.sessionStorage.removeItem('token');
+                            window.localStorage.removeItem('user');
+                            window.localStorage.removeItem('token');
 
                             this.$store.commit('LOGOUT');
                             this.isLogin = false;
