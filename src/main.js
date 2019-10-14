@@ -9,6 +9,9 @@ import App from './App'
 
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+// 复制功能
+import Clipboard from 'clipboard';
+Vue.prototype.Clipboard=Clipboard;
 
 Vue.use(VueAxios, axios);
 axios.defaults.baseURL = process.env.API_ROOT;
@@ -107,7 +110,8 @@ import {
     TabItem,
     Checker,
     CheckerItem,
-    PopupPicker
+    PopupPicker,
+    AlertPlugin
 } from 'vux'
 
 // import Rater from './components/rater'
@@ -147,6 +151,7 @@ Vue.config.productionTip = false
 import {WechatPlugin} from 'vux'
 
 Vue.use(WechatPlugin);
+Vue.use(AlertPlugin);
 // Vue.use(AjaxPlugin)
 
 FastClick.attach(document.body)

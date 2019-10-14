@@ -172,6 +172,16 @@
         mounted() {
 
         },
+        beforeRouteEnter(to, from, next) {
+            if (to.name == 'information') {
+                // 取不到this,组件还未创建
+                // console.log(this);
+                // this.showCompanyInfo = true;
+                next(vm => {
+                    vm.showUserInfo = true;
+                });
+            }
+        },
         methods: {
             submitUserInfo() {
                 let idCard = /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/;
@@ -220,12 +230,30 @@
                             }
 
                             this.showUserInfo = false;
+                            if (window.localStorage.getItem('isFree')) {
+                                this.addFreeOrder();
+                            }
                         }else{
                             this.toast(data.message);
                         }
                     })
                     .catch(error => {
                         console.log(error)
+                    });
+            },
+            addFreeOrder(){
+                this.axios.post(public_methods.api.addFreeOrder, {
+                    agentIdentifyCode: this.identifyCode
+                }).then(res => {
+                    let data = res.data;
+                    if (data.errorCode == 0) {
+                        console.log(data);
+                    } else {
+                        toast(data.message);
+                    }
+                })
+                    .catch(error => {
+                        console.log(error);
                     });
             },
             submitMoreUserInfo(){

@@ -1,6 +1,10 @@
 <template>
     <div class="free-register">
         <div class="a-header">注册</div>
+        <div class="success-tips" v-if="isRegister">
+            <span class="welcome">您好，您己注册成功！</span>请登录后台：{{adminLogin}}补充信息,我们会尽快和您取得联系!
+            <x-button type="primary" class="tag-read" mini ref="tagRead" :data-clipboard-text="adminLogin" @click.native="copyUrl">复制链接地址</x-button>
+        </div>
         <div class="user-info">
             <group title="您的姓名" label-width="0" label-align="right">
                 <x-input title="" placeholder="请输入您的姓名" v-model="name" type="text"></x-input>
@@ -11,7 +15,7 @@
             <group title="短信验证码" label-width="0" label-align="right">
                 <Flexbox>
                     <FlexboxItem>
-                        <x-input title="" placeholder="请输入短信验证码" v-model="verifyCode"  :max="6" type="text"></x-input>
+                        <x-input title="" placeholder="请输入短信验证码" v-model="verifyCode" :max="6" type="text"></x-input>
                     </FlexboxItem>
                     <FlexboxItem :span="4">
                         <x-button plain class="phone-code" @click.native="getPhoneCode" :disabled="disabled">
@@ -36,7 +40,9 @@
 <script type="text/ecmascript-6">
     import {Flexbox, FlexboxItem} from 'vux';
     import {public_methods} from '../../../assets/js/public_method';
+
     let PHONE_REGX = /^(1[3-9])\d{9}$/;
+
     export default {
         name: "free-register",
         data() {
@@ -50,13 +56,17 @@
                 identifyCode: '',
                 roleType: null,
                 channel: '',
+                adminLogin: public_methods.url.adminLogin,
+                isRegister: false
             }
+        },
+        created() {
+
         },
         mounted() {
             this.identifyCode = this.$route.query.identifyCode;
             this.roleType = this.$route.query.roleType;
             this.channel = this.$route.query.channel;
-            // console.log(this.identifyCode, this.roleType);
         },
         methods: {
             submitInfo() {
@@ -69,17 +79,12 @@
                     return;
                 }
                 let url = public_methods.api.freeRegister;
-                this.axios.get(url + '?phone=' + this.phone + '&name=' + this.name + '&verifyCode='+this.verifyCode + '&identifyCode=' + this.identifyCode + '&roleType=' + this.roleType + '&channel='+ this.channel)
+                this.axios.get(url + '?phone=' + this.phone + '&name=' + this.name + '&verifyCode=' + this.verifyCode + '&identifyCode=' + this.identifyCode + '&roleType=' + this.roleType + '&channel=' + this.channel)
                     .then(response => {
-                        let data= response.data;
-                        if(data.errorCode === 0){
-                            // 存储token
-                            // this.$store.commit('LOGIN', data.data.token);
-                            // this.$store.commit('SET_USER_ID', data.data.id);
-                            // this.$store.commit('SET_LOGIN_USER_PHONE', data.data.phone);
-                            this.toast('注册成功！我们会尽快安排工作人员与您联系！')
-                            // this.$router.push('/login');
-                        }else{
+                        let data = response.data;
+                        if (data.errorCode === 0) {
+                            this.isRegister = true;
+                        } else {
                             this.toast(data.message);
                         }
                     })
@@ -96,7 +101,7 @@
                     return;
                 }
                 this.axios.get(public_methods.api.registerVerifyCod + '?phone=' + this.phone).then(data => {
-                    if(data.data.errorCode == 0){
+                    if (data.data.errorCode == 0) {
                         this.sending = false;
                         this.disabled = true;
                         let result = setInterval(() => {
@@ -108,11 +113,23 @@
                                 this.second = 60;
                             }
                         }, 1000);
-                    }else{
+                    } else {
                         this.toast(data.data.message);
                     }
 
                 });
+            },
+            copyUrl() {
+                let clipboard = new this.Clipboard('.tag-read');
+                clipboard.on('success', e => {
+                    this.toast("复制成功,请在PC端打开链接");
+                    clipboard.destroy();
+                });
+                clipboard.on('error', e => {
+                    // 不支持复制
+                    this.toast('该浏览器不支持自动复制');
+                    clipboard.destroy();
+                })
             },
             toast(text) {
                 this.$vux.toast.show({
@@ -131,21 +148,36 @@
 
 <style lang="less" scoped>
     .free-register {
-        .a-header{
+        .success-tips{background: #f0f9eb; padding: 10px;}
+        .tag-read{margin-top: 5px;}
+        .welcome{display: block; font-weight: 700;}
+        .a-header {
             background: rgb(84, 107, 224);
-            color: #fff; font-size: 18px; text-align: center; line-height: 45px;
+            color: #fff;
+            font-size: 18px;
+            text-align: center;
+            line-height: 45px;
         }
+
         .phone-code {
             font-size: 13px;
             color: #5369E8;
             border: 1px #DCDCDC solid;
         }
-        .fl-box{
+
+        .fl-box {
             display: flex;
-            padding: 0 20px 20px 20px; margin-top: 30px;
+            padding: 0 20px 20px 20px;
+            margin-top: 30px;
         }
-        .back-home{
-            height: 42px; width: 150px; margin-top: 15px; border: 1px #BFBFBF solid; overflow: hidden; color: #646464;
+
+        .back-home {
+            height: 42px;
+            width: 150px;
+            margin-top: 15px;
+            border: 1px #BFBFBF solid;
+            overflow: hidden;
+            color: #646464;
         }
     }
 </style>

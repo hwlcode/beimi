@@ -12,14 +12,14 @@
                            placeholder="请选择经营城市"></x-address>
             </group>
             <group title="经营地址" label-width="0" label-align="right">
-                <x-input title="" placeholder="请输入经营地址" v-model="companyBusinessAddress" type="tel"></x-input>
+                <x-input title="" placeholder="请输入经营地址" v-model="companyBusinessAddress" type="text"></x-input>
             </group>
             <div style="padding: 0 20px 20px 20px; margin-top: 30px;">
                 <x-button :gradients="['#546BE0', '#546BE0']" @click.native="submitInfo"
                           style="border-radius:99px;">下一步
                 </x-button>
             </div>
-<!--            <v-service></v-service>-->
+            <!--            <v-service></v-service>-->
         </div>
         <div class="more-company-info" v-show="!showCompanyInfo">
             <!-- company -->
@@ -103,21 +103,31 @@
             }
         },
         created() {
-            if(window.localStorage.getItem('user')){
+            if (window.localStorage.getItem('user')) {
                 this.isLogin = true;
                 this.showCompanyInfo = true;
                 this.getCompanyInfo();
                 this.getCompanyOperate();
-            }else{
+            } else {
                 this.isLogin = false;
                 this.showCompanyInfo = true;
+            }
+        },
+        beforeRouteEnter(to, from, next) {
+            if (to.name == 'company') {
+                // 取不到this,组件还未创建
+                // console.log(this);
+                // this.showCompanyInfo = true;
+                next(vm => {
+                    vm.showCompanyInfo = true;
+                });
             }
         },
         mounted() {
 
         },
         methods: {
-            viewCreditPoints(){
+            viewCreditPoints() {
                 this.$store.commit('SET_CURRENT_TAB_PAGE', 1);
                 this.$router.push({
                     name: 'credit',
@@ -201,12 +211,12 @@
                     .then(response => {
                         let data = response.data;
                         if (data.errorCode === 0) {
-                            if(window.localStorage.getItem('identifyCode')){
+                            if (window.localStorage.getItem('isFree')) {
                                 this.$router.push({
                                     name: 'loan'
                                 });
-                                this.$store.commit('SET_CURRENT_TAB_PAGE',4);
-                            }else{
+                                // this.$store.commit('SET_CURRENT_TAB_PAGE',4);
+                            } else {
                                 this.$router.push({
                                     name: 'credit',
                                     params: {
@@ -222,7 +232,7 @@
                     });
             },
             getCompanyInfo() {
-                if(this.isLogin){
+                if (this.isLogin) {
                     this.axios.get(public_methods.api.getCompanyInfo)
                         .then(res => {
                             let data = res.data;
@@ -230,7 +240,7 @@
                                 this.companyName = data.data.companyName;
                                 this.companySocialCreditCode = data.data.companySocialCreditCode;
                                 this.companyBusinessAddress = data.data.companyBusinessAddress;
-                                if(data.data.provinceCode != null){
+                                if (data.data.provinceCode != null) {
                                     this.selectedCity.push(data.data.provinceCode + '');
                                     this.selectedCity.push(data.data.cityCode + '');
                                     this.selectedCity.push(data.data.areaCode + '');
@@ -245,7 +255,7 @@
                 }
             },
             getCompanyOperate() {
-                if(this.isLogin){
+                if (this.isLogin) {
                     this.axios.get(public_methods.api.getCompanyOperate)
                         .then(res => {
                             let data = res.data;
@@ -289,7 +299,9 @@
             font-size: 16px;
         }
 
-        .vux-cell-value{color:#000;}
+        .vux-cell-value {
+            color: #000;
+        }
 
         .tips-container {
             position: relative;

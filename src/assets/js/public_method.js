@@ -37,7 +37,8 @@ export let public_methods = {
         addFreeOrder: '/v1/api/order/addFreeOrder', // 普通贷款用户免费订单
     },
     url: {
-        domain: 'http://beimi.welcometo5g.cn'
+        domain: 'http://beimi.welcometo5g.cn',
+        adminLogin: 'http://tutuspaces.com:10866/beimi-admin/#/login'
     },
     tools: {
         //自定义的tap事件

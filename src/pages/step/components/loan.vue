@@ -95,7 +95,7 @@
                             <FlexboxItem :span="4">
                                 <div style="padding-left: 10px;">额度氛围：</div>
                             </FlexboxItem>
-                            <FlexboxItem :span="8">{{item.minLoan}}万元~{{item.maxLoan}}万元</FlexboxItem>
+                            <FlexboxItem :span="8">{{item.minLoan}}元~{{item.maxLoan}}元</FlexboxItem>
                         </Flexbox>
                         <div class="btn-box">
                             <a :href="item.productUrl" class="btn">点击查看详情</a>
@@ -112,20 +112,22 @@
                     <td width="50%">
                         <p style="text-align: center; padding-top: 10px;">信用卡</p>
                         <p style="text-align: center; font-size: 20px; color: #5369E8; font-weight: 700;">
-                            {{credits.length}}</p>
+                            <a href="#credits">{{credits.length}}</a>
+                        </p>
                         <p style="text-align: center; padding-bottom: 10px;">视图</p>
                     </td>
                     <td>
                         <p style="text-align: center; padding-top: 10px;">其他融资方案</p>
                         <p style="text-align: center; font-size: 20px; color: #5369E8;  font-weight: 700;">
-                            {{services.length}}</p>
+                            <a href="#services">{{services.length}}</a>
+                        </p>
                         <p style="text-align: center; padding-bottom: 10px;">视图</p>
                     </td>
                 </tr>
                 </tbody>
             </x-table>
         </div>
-        <div class="report-list">
+        <div class="report-list" id="credits">
             <h2>建立信贷或获取资金的其他方式</h2>
             <x-table full-bordered style="background-color:#fff;" v-if="credits.length == 0">
                 <tr>
@@ -154,23 +156,23 @@
                             <FlexboxItem :span="4">
                                 <div style="padding-left: 10px;">额度氛围：</div>
                             </FlexboxItem>
-                            <FlexboxItem :span="8">{{item.minLoan}}万元~{{item.maxLoan}}万元</FlexboxItem>
+                            <FlexboxItem :span="8">{{item.minLoan}}元~{{item.maxLoan}}元</FlexboxItem>
                         </Flexbox>
                         <div class="btn-box">
                             <a :href="item.productUrl" class="btn">点击查看详情</a>
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td colspan="2" style=" background: #E5E5E5">
-                        <router-link to="/credit-card">点击查看更多</router-link>
-                        <x-icon type="ios-arrow-down" size="10"></x-icon>
-                    </td>
-                </tr>
+<!--                <tr>-->
+<!--                    <td colspan="2" style=" background: #E5E5E5">-->
+<!--                        <router-link to="/credit-card">点击查看更多</router-link>-->
+<!--                        <x-icon type="ios-arrow-down" size="10"></x-icon>-->
+<!--                    </td>-->
+<!--                </tr>-->
                 </tbody>
             </x-table>
         </div>
-        <div class="report-list">
+        <div class="report-list" id="services">
             <h2 style="margin-bottom: 0">为您的企业提供资源</h2>
             <x-table full-bordered style="background-color:#fff; margin-top: 15px;" v-if="services.length == 0">
                 <tr>
@@ -201,19 +203,19 @@
                             <FlexboxItem :span="4">
                                 <div style="padding-left: 10px;">额度氛围：</div>
                             </FlexboxItem>
-                            <FlexboxItem :span="8">{{item.minLoan}}万元~{{item.maxLoan}}万元</FlexboxItem>
+                            <FlexboxItem :span="8">{{item.minLoan}}元~{{item.maxLoan}}元</FlexboxItem>
                         </Flexbox>
                         <div class="btn-box">
                             <a :href="item.productUrl" class="btn">点击查看详情</a>
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td colspan="2" style=" background: #E5E5E5">
-                        <router-link to="/credit-card">点击查看更多</router-link>
-                        <x-icon type="ios-arrow-down" size="10"></x-icon>
-                    </td>
-                </tr>
+<!--                <tr>-->
+<!--                    <td colspan="2" style=" background: #E5E5E5">-->
+<!--                        <router-link to="/credit-card">点击查看更多</router-link>-->
+<!--                        <x-icon type="ios-arrow-down" size="10"></x-icon>-->
+<!--                    </td>-->
+<!--                </tr>-->
                 </tbody>
             </x-table>
         </div>
@@ -282,31 +284,32 @@
         },
         methods: {
             showCredit() {
-                this.$router.push({
-                    name: 'credit'
-                });
-                this.$store.commit('SET_CURRENT_TAB_PAGE', 3);
+                this.hasReview();
+                // this.$router.push({
+                //     name: 'credit'
+                // });
+                // this.$store.commit('SET_CURRENT_TAB_PAGE', 3);
             },
-            // hasReview() {
-            //     this.axios.get(public_methods.api.hasReview).then(
-            //         response => {
-            //             let data = response.data;
-            //             if (data.data) {
-            //                 this.$router.push({
-            //                     name: 'credit'
-            //                 });
-            //                 this.$store.commit('SET_CURRENT_TAB_PAGE', 3);
-            //             } else {
-            //                 this.$router.push({
-            //                     name: 'credit'
-            //                 });
-            //                 this.$store.commit('SET_CURRENT_TAB_PAGE', 2);
-            //             }
-            //         })
-            //         .catch(error => {
-            //             console.log(error)
-            //         });
-            // },
+            hasReview() {
+                this.axios.get(public_methods.api.hasReview).then(
+                    response => {
+                        let data = response.data;
+                        if (data.data) {
+                            this.$router.push({
+                                name: 'credit'
+                            });
+                            this.$store.commit('SET_CURRENT_TAB_PAGE', 3);
+                        } else {
+                            this.$router.push({
+                                name: 'credit'
+                            });
+                            this.$store.commit('SET_CURRENT_TAB_PAGE', 2);
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    });
+            },
             recommand() {
                 this.axios.post(public_methods.api.recommand).then(res => {
                     let data = res.data;

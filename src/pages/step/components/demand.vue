@@ -93,22 +93,23 @@
                 disabled: false,
                 identifyCode: '',
                 channel: '',
+                isFree: false
             }
         },
         created() {
             this.identifyCode = this.$route.query.identifyCode;
             this.channel = this.$route.query.channel;
+            this.isFree = this.$route.query.type == 'invite';
 
-            if (this.identifyCode != undefined) {
-                if (window.localStorage.getItem('identifyCode')) {
-                    window.localStorage.removeItem('identifyCode');
-                    window.localStorage.setItem('identifyCode', this.identifyCode);
+            if (this.isFree) {
+                if (window.localStorage.getItem('isFree')) {
+                    window.localStorage.removeItem('isFree');
+                    window.localStorage.setItem('isFree', this.isFree);
                 } else {
-                    window.localStorage.setItem('identifyCode', this.identifyCode);
+                    window.localStorage.setItem('isFree', this.isFree);
                 }
-                this.addFreeOrder();
             } else {
-                window.localStorage.removeItem('identifyCode');
+                window.localStorage.removeItem('isFree');
             }
             // console.log(this.identifyCode, this.channel);
             if (!window.localStorage.getItem('user')) {
@@ -157,21 +158,6 @@
                 this.$router.push({
                     name: 'pay'
                 });
-            },
-            addFreeOrder(){
-                this.axios.post(public_methods.api.addFreeOrder, {
-                    agentIdentifyCode: this.identifyCode
-                }).then(res => {
-                        let data = res.data;
-                        if (data.errorCode == 0) {
-                            console.log(data);
-                        } else {
-                            toast(data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    });
             },
             getLoan() {
                 if (window.localStorage.getItem('user')) {

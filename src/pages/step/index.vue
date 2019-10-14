@@ -68,14 +68,6 @@
                     name: this.list[index].value
                 });
                 this.$store.commit('SET_CURRENT_TAB_PAGE', 1);
-                // if (index == 3) {
-                // if (window.localStorage.getItem('identifyCode')) {
-                //     this.toast('当前为免费贷款用户!');
-                //     this.$store.commit('SET_CURRENT_TAB_PAGE', 3);
-                // } else {
-                //     this.$store.commit('SET_CURRENT_TAB_PAGE', 1);
-                // }
-                // }
             },
             handleBack() {
                 if (this.step > 0) {

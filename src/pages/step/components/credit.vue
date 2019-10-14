@@ -269,7 +269,13 @@
                 this.currentPage = 1 // 加载的时候先加载第一页
             },
             beginTest() {
-                this.currentTabPage = 2;
+                if (window.localStorage.getItem('isFree')) {
+                    this.$router.push({
+                        name: 'loan'
+                    });
+                } else {
+                    this.currentTabPage = 2;
+                }
             },
 
             getOrderNo() {
@@ -280,10 +286,10 @@
                     let data = res.data;
                     if (data.errorCode == 0) {
                         this.out_trade_no = data.data;
-                        if(window.localStorage.getItem('out_order_no')){
+                        if (window.localStorage.getItem('out_order_no')) {
                             window.localStorage.removeItem('out_order_no');
                             window.localStorage.setItem('out_order_no', data.data);
-                        }else{
+                        } else {
                             window.localStorage.setItem('out_order_no', data.data);
                         }
 
