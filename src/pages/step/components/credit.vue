@@ -38,50 +38,50 @@
         <div style="padding-top: 15px;" class="test-score" v-if="currentTabPage == 2">
             <div class="score-body">
                 <div class="users-list">
-                    <h2>已有12334人查询</h2>
+                    <h2>已有{{userNum}}人查询</h2>
                     <div class="user-swiper">
                         <swiper auto height="130px" direction="vertical" :interval=2000 class="text-scroll"
                                 :show-dots="false">
                             <swiper-item>
                                 <dl>
                                     <dt><i class="icon icon-1"></i></dt>
-                                    <dd>王女士 信用分754，获得贷款290000元</dd>
+                                    <dd>王女士 信用分558，获得贷款20000元</dd>
                                 </dl>
                                 <dl>
                                     <dt><i class="icon icon-2"></i></dt>
-                                    <dd>李女士 信用分754，获得贷款290000元</dd>
+                                    <dd>李女士 信用分671，获得贷款60000元</dd>
                                 </dl>
                                 <dl>
                                     <dt><i class="icon icon-3"></i></dt>
+                                    <dd>陈先生 信用分701，获得贷款130000元</dd>
+                                </dl>
+                            </swiper-item>
+                            <swiper-item>
+                                <dl>
+                                    <dt><i class="icon icon-1"></i></dt>
+                                    <dd>王女士 信用分775，获得贷款200000元</dd>
+                                </dl>
+                                <dl>
+                                    <dt><i class="icon icon-1"></i></dt>
+                                    <dd>李女士 信用分809，获得贷款300000元</dd>
+                                </dl>
+                                <dl>
+                                    <dt><i class="icon icon-1"></i></dt>
                                     <dd>陈先生 信用分754，获得贷款290000元</dd>
                                 </dl>
                             </swiper-item>
                             <swiper-item>
                                 <dl>
                                     <dt><i class="icon icon-1"></i></dt>
-                                    <dd>王女士 信用分754，获得贷款290000元</dd>
+                                    <dd>王女士 信用分971，获得贷款1000000元</dd>
                                 </dl>
                                 <dl>
                                     <dt><i class="icon icon-1"></i></dt>
-                                    <dd>李女士 信用分754，获得贷款290000元</dd>
+                                    <dd>王女士 信用分775，获得贷款200000元</dd>
                                 </dl>
                                 <dl>
                                     <dt><i class="icon icon-1"></i></dt>
-                                    <dd>陈先生 信用分754，获得贷款290000元</dd>
-                                </dl>
-                            </swiper-item>
-                            <swiper-item>
-                                <dl>
-                                    <dt><i class="icon icon-1"></i></dt>
-                                    <dd>王女士 信用分754，获得贷款290000元</dd>
-                                </dl>
-                                <dl>
-                                    <dt><i class="icon icon-1"></i></dt>
-                                    <dd>李女士 信用分754，获得贷款290000元</dd>
-                                </dl>
-                                <dl>
-                                    <dt><i class="icon icon-1"></i></dt>
-                                    <dd>陈先生 信用分754，获得贷款290000元</dd>
+                                    <dd>李女士 信用分809，获得贷款300000元</dd>
                                 </dl>
                             </swiper-item>
                         </swiper>
@@ -144,6 +144,8 @@
                 banner1: require('../images/4.png'),
                 banner2: require('../images/2.png'),
                 banner3: require('../images/3.png'),
+
+                userNum: Math.ceil(new Date().getTime() / 1000),
 
                 percent: 60,
                 companyCreditScore: 0,
@@ -427,9 +429,10 @@
                                                     status: data.data.trade_state[0],
                                                     succTime: data.data.time_end[0] || ''
                                                 });
-                                                self.$router.push({
-                                                    name: 'loan'
-                                                });
+                                                self.$router.push({path: '/agent/free-register-success', query: this.routerObj});
+                                                // self.$router.push({
+                                                //     name: 'loan'
+                                                // });
                                             } else {
                                                 self.toast(data.data.msg);
                                             }

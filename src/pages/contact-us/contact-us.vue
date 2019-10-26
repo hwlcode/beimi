@@ -25,19 +25,18 @@
                 </group>
                 <x-button type="default" class="form-btn" @click.native="commitForm">比较贷方</x-button>
                 <div class="map">
-                    <baidu-map class="bai-map" ak="zvWg6ieHbzdajEfFnki4ObZCtjCXGDUs" :center="{lng: 116.404, lat: 39.915}" :zoom="15">
+                    <baidu-map class="bai-map" ak="zvWg6ieHbzdajEfFnki4ObZCtjCXGDUs" :center="{lng: 113.920949, lat: 22.589123}" :zoom="15">
                     </baidu-map>
                     <div class="contact-s">
                         <ul>
-                            <li><i class="icon icon-1"></i>188 8888 8888</li>
-                            <li><i class="icon icon-1"></i>188 6666 6666</li>
+                            <li><i class="icon icon-1"></i>15112339298</li>
+<!--                            <li><i class="icon icon-1"></i>188 6666 6666</li>-->
                             <li>
-                                <i class="icon icon-1"></i>0755- 2301 1054
+                                <i class="icon icon-1"></i>0755-85245354
                                 <p class="work">周一至周五| 上午9点至晚上9点</p>
                             </li>
                             <li><i class="icon icon-1"></i>
-                                <p class="address">这里放公司地址信息这里放公司地址信息这里放
-                                公司地址信息</p></li>
+                                <p class="address">广东省深圳市宝安区新安街道留仙二路61号</p></li>
                         </ul>
                     </div>
                 </div>

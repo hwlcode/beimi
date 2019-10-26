@@ -96,6 +96,18 @@ const router = new Router({
             props: true
         },
         {
+            path: '/landing/brush-face',
+            name: 'brush-face',
+            component: resolve => require(['pages/landing/brush-face/brush-face'], resolve),
+            props: true
+        },
+        {
+            path: '/agent/free-register-success',
+            name: 'free-register-success',
+            component: resolve => require(['pages/agent/free-register-success/free-register-success'], resolve),
+            props: true
+        },
+        {
             path: '/agent/free-register',
             name: 'register',
             component: resolve => require(['pages/agent/free-register/free-register'], resolve),

@@ -65,8 +65,8 @@
                     </dl>
                     <dl class="menu-item">
                         <dt>
-                            <router-link to="/step">获取贷款优惠</router-link>
-<!--                            <router-link to="/login" @click.native.stop="getLoan()">获取贷款优惠</router-link>-->
+<!--                            <router-link to="/step">获取贷款优惠</router-link>-->
+                            <a @click.stop="checkLogin">获取贷款优惠</a>
                         </dt>
                         <dd><i class="icon"></i></dd>
                     </dl>
@@ -137,11 +137,18 @@
                 this.showMenu = false;
                 this.move();
             },
-            getLoan() {
-                if (this.isLogin) {
+            // getLoan() {
+            //     if (this.isLogin) {
+            //         this.$router.push('/step');
+            //     } else {
+            //         this.$router.push('/login');
+            //     }
+            // },
+            checkLogin(){
+                if(window.localStorage.getItem('user')){
+                    this.$router.push('/step/loan');
+                }else{
                     this.$router.push('/step');
-                } else {
-                    this.$router.push('/login');
                 }
             },
             logout() {

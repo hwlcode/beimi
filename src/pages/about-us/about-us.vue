@@ -63,15 +63,15 @@
                 <dl>
                     <dt>成为Beimi的合作伙伴</dt>
                     <dd>
-                        <router-link to="/" class="more-link">了解更多</router-link>
-                        <router-link to="/" class="more-link" style="text-align: right">&gt;&gt;</router-link>
+                        <router-link to="/agent/register" class="more-link">了解更多</router-link>
+                        <router-link to="/agent/register" class="more-link" style="text-align: right">&gt;&gt;</router-link>
                     </dd>
                 </dl>
                 <dl>
                     <dt>成为Beimi的合作伙伴</dt>
                     <dd>
-                        <router-link to="/" class="more-link">了解更多</router-link>
-                        <router-link to="/" class="more-link" style="text-align: right">&gt;&gt;</router-link>
+                        <router-link to="/agent/register" class="more-link">了解更多</router-link>
+                        <router-link to="/agent/register" class="more-link" style="text-align: right">&gt;&gt;</router-link>
                     </dd>
                 </dl>
             </div>

@@ -87,19 +87,27 @@
                         <div v-html="item.productDesc" style="text-align: left; padding-left: 10px;"></div>
                         <Flexbox>
                             <FlexboxItem :span="4">
-                                <div style="padding-left: 10px;">产品月费：</div>
+                                <div style="padding-left: 10px;">最低利率：</div>
                             </FlexboxItem>
-                            <FlexboxItem :span="8">{{item.loanRate}}%/月</FlexboxItem>
+                            <FlexboxItem :span="8">{{item.loanRate}}%</FlexboxItem>
                         </Flexbox>
                         <Flexbox>
                             <FlexboxItem :span="4">
-                                <div style="padding-left: 10px;">额度氛围：</div>
+                                <div style="padding-left: 10px;">额度范围：</div>
                             </FlexboxItem>
                             <FlexboxItem :span="8">{{item.minLoan}}元~{{item.maxLoan}}元</FlexboxItem>
                         </Flexbox>
                         <div class="btn-box">
                             <a :href="item.productUrl" class="btn">点击查看详情</a>
                         </div>
+                    </td>
+                </tr>
+                <tr v-if="loans.length > 3">
+                    <td colspan="2" style=" background: #E5E5E5">
+                        <a href="javascript:;" @click="showAllLoans" v-if="hideLoan">点击查看更多</a>
+                        <x-icon type="ios-arrow-down" size="10" v-if="hideLoan"></x-icon>
+                        <a href="javascript:;" @click="hideAllLoans" v-if="!hideLoan">收起</a>
+                        <x-icon type="ios-arrow-up" size="10" v-if="!hideLoan"></x-icon>
                     </td>
                 </tr>
                 </tbody>
@@ -148,13 +156,13 @@
                         <div v-html="item.productDesc" style="text-align: left; padding-left: 10px;"></div>
                         <Flexbox>
                             <FlexboxItem :span="4">
-                                <div style="padding-left: 10px;">产品月费：</div>
+                                <div style="padding-left: 10px;">年利率：</div>
                             </FlexboxItem>
-                            <FlexboxItem :span="8">{{item.loanRate}}%/月</FlexboxItem>
+                            <FlexboxItem :span="8">{{item.loanRate}}%</FlexboxItem>
                         </Flexbox>
                         <Flexbox>
                             <FlexboxItem :span="4">
-                                <div style="padding-left: 10px;">额度氛围：</div>
+                                <div style="padding-left: 10px;">额度范围：</div>
                             </FlexboxItem>
                             <FlexboxItem :span="8">{{item.minLoan}}元~{{item.maxLoan}}元</FlexboxItem>
                         </Flexbox>
@@ -163,12 +171,14 @@
                         </div>
                     </td>
                 </tr>
-<!--                <tr>-->
-<!--                    <td colspan="2" style=" background: #E5E5E5">-->
-<!--                        <router-link to="/credit-card">点击查看更多</router-link>-->
-<!--                        <x-icon type="ios-arrow-down" size="10"></x-icon>-->
-<!--                    </td>-->
-<!--                </tr>-->
+                <tr v-if="credits.length > 3">
+                    <td colspan="2" style=" background: #E5E5E5">
+                        <a href="javascript:;" @click="showAllCredits" v-if="hideCredits">点击查看更多</a>
+                        <x-icon type="ios-arrow-down" size="10" v-if="hideCredits"></x-icon>
+                        <a href="javascript:;" @click="hideAllCredits" v-if="!hideCredits">收起</a>
+                        <x-icon type="ios-arrow-up" size="10" v-if="!hideCredits"></x-icon>
+                    </td>
+                </tr>
                 </tbody>
             </x-table>
         </div>
@@ -193,29 +203,31 @@
                     <td>
                         <h3>{{item.productName}}</h3>
                         <div v-html="item.productDesc" style="text-align: left; padding-left: 10px;"></div>
-                        <Flexbox>
-                            <FlexboxItem :span="4">
-                                <div style="padding-left: 10px;">产品月费：</div>
-                            </FlexboxItem>
-                            <FlexboxItem :span="8">{{item.loanRate}}%/月</FlexboxItem>
-                        </Flexbox>
-                        <Flexbox>
-                            <FlexboxItem :span="4">
-                                <div style="padding-left: 10px;">额度氛围：</div>
-                            </FlexboxItem>
-                            <FlexboxItem :span="8">{{item.minLoan}}元~{{item.maxLoan}}元</FlexboxItem>
-                        </Flexbox>
+                        <!--                        <Flexbox>-->
+                        <!--                            <FlexboxItem :span="4">-->
+                        <!--                                <div style="padding-left: 10px;">产品年费：</div>-->
+                        <!--                            </FlexboxItem>-->
+                        <!--                            <FlexboxItem :span="8">{{item.loanRate}}%/月</FlexboxItem>-->
+                        <!--                        </Flexbox>-->
+                        <!--                        <Flexbox>-->
+                        <!--                            <FlexboxItem :span="4">-->
+                        <!--                                <div style="padding-left: 10px;">额度范围：</div>-->
+                        <!--                            </FlexboxItem>-->
+                        <!--                            <FlexboxItem :span="8">{{item.minLoan}}元~{{item.maxLoan}}元</FlexboxItem>-->
+                        <!--                        </Flexbox>-->
                         <div class="btn-box">
                             <a :href="item.productUrl" class="btn">点击查看详情</a>
                         </div>
                     </td>
                 </tr>
-<!--                <tr>-->
-<!--                    <td colspan="2" style=" background: #E5E5E5">-->
-<!--                        <router-link to="/credit-card">点击查看更多</router-link>-->
-<!--                        <x-icon type="ios-arrow-down" size="10"></x-icon>-->
-<!--                    </td>-->
-<!--                </tr>-->
+                <tr v-if="services.length > 3">
+                    <td colspan="2" style=" background: #E5E5E5">
+                        <a href="javascript:;" @click="showAllServices" v-if="allServices">点击查看更多</a>
+                        <x-icon type="ios-arrow-down" size="10" v-if="allServices"></x-icon>
+                        <a href="javascript:;" @click="hideAllServices" v-if="!allServices">收起</a>
+                        <x-icon type="ios-arrow-up" size="10" v-if="!allServices"></x-icon>
+                    </td>
+                </tr>
                 </tbody>
             </x-table>
         </div>
@@ -247,6 +259,15 @@
                 loans: [], // 已匹配贷款产品
                 credits: [], // 己匹配信用卡产品
                 services: [], // 已匹配服务
+
+                allLoans: [], // 已匹配贷款产品
+                allCredits: [], // 己匹配信用卡产品
+                allServices: [], // 已匹配服务
+
+                hideLoan: true,
+                hideCredits: true,
+                hideServices: true,
+
                 status: 0,
                 head: '',
                 name: '',
@@ -290,6 +311,30 @@
                 // });
                 // this.$store.commit('SET_CURRENT_TAB_PAGE', 3);
             },
+            showAllLoans() {
+                this.loans = this.allLoans;
+                this.hideLoan = false;
+            },
+            hideAllLoans() {
+                this.loans = this.allLoans.slice(0, 3);
+                this.hideLoan = true;
+            },
+            showAllCredits(){
+                this.credits = this.allCredits;
+                this.hideCredits = false;
+            },
+            hideAllCredits(){
+                this.credits = this.allCredits.slice(0, 3);
+                this.hideCredits = true;
+            },
+            showAllServices(){
+                this.services = this.allServices;
+                this.hideServices = false;
+            },
+            hideAllServices(){
+                this.services = this.allServices.slice(0, 3);
+                this.hideServices = true;
+            },
             hasReview() {
                 this.axios.get(public_methods.api.hasReview).then(
                     response => {
@@ -314,9 +359,14 @@
                 this.axios.post(public_methods.api.recommand).then(res => {
                     let data = res.data;
                     if (data.errorCode == 0) {
-                        this.loans = data.data.loans;
-                        this.credits = data.data.credits;
-                        this.services = data.data.services;
+                        this.loans = data.data.loans.slice(0, 3);
+                        this.credits = data.data.credits.slice(0, 3);
+                        this.services = data.data.services.slice(0, 3);
+
+                        this.allLoans = data.data.loans;
+                        this.allCredits = data.data.credits;
+                        this.allServices = data.data.services;
+
                         this.status = data.data.status;
                         this.head = data.data.head;
                         this.name = data.data.name;

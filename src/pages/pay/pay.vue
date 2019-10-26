@@ -157,11 +157,12 @@
                 payWay: true,
                 code: null,
                 openId: null,
-                out_trade_no: `BM${new Date().getTime()}` // 正式的时候需要修改
+                out_trade_no: `BM${new Date().getTime()}`, // 正式的时候需要修改
+                routerObj: null
             }
         },
         created() {
-
+            this.routerObj = this.$route.query;
         },
         mounted() {
             // 获取code方法只有在mounted里面可以获取

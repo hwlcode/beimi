@@ -11,7 +11,7 @@
             <group title="短信验证码" label-width="0" label-align="right">
                 <Flexbox>
                     <FlexboxItem>
-                        <x-input title="" placeholder="请输入短信验证码" v-model="verifyCode"  :max="6" type="text"></x-input>
+                        <x-input title="" placeholder="请输入短信验证码" v-model="verifyCode" :max="6" type="text"></x-input>
                     </FlexboxItem>
                     <FlexboxItem :span="4">
                         <x-button plain class="phone-code" @click.native="getPhoneCode" :disabled="disabled">
@@ -51,14 +51,15 @@
                 second: 60,
                 identifyCode: '',
                 roleType: null,
-                channel: ''
+                channel: '',
+                routerObj: null
             }
         },
         mounted() {
-            this.identifyCode = this.$route.query.identifyCode;
-            this.roleType = this.$route.query.roleType;
-            this.channel = this.$route.query.channel;
-            // console.log(this.identifyCode, this.roleType);
+            this.routerObj = this.$route.query;
+            this.identifyCode = this.routerObj.identifyCode || '';
+            this.roleType = this.routerObj.roleType || '';
+            this.channel = this.routerObj.channel || '';
         },
         methods: {
             submitInfo() {
@@ -80,7 +81,8 @@
                             // this.$store.commit('SET_USER_ID', data.data.id);
                             // this.$store.commit('SET_LOGIN_USER_PHONE', data.data.phone);
                             // this.toast('注册成功！我们会尽快安排工作人员与您联系！')
-                            this.$router.push('/agent/user/pay');
+                            this.routerObj['userName'] = this.name;
+                            this.$router.push({path: '/agent/user/pay', query: this.routerObj});
                         } else {
                             this.toast(data.message);
                         }
@@ -90,7 +92,7 @@
                     });
             },
             backHome() {
-                this.$router.push('/');
+                this.$router.push({path: '/agent/qr', query: this.routerObj});
             },
             getPhoneCode() {
                 if (this.phone == '' || !PHONE_REGX.test(this.phone)) {

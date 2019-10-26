@@ -7,8 +7,8 @@
                 <h4>大数据匹配 方案定制 快速获得资金</h4>
                 <div>
                     <input type="text" placeholder="￥您需要多少钱？" v-model="needMoney">
-                    <router-link class="common-small-bth need-money-btn" to="/step">获取方案</router-link>
-<!--                    <a class="common-small-bth need-money-btn">获取方案</a>-->
+<!--                    <router-link class="common-small-bth need-money-btn" to="/step">获取方案</router-link>-->
+                    <a class="common-small-bth need-money-btn" @click.stop="checkLogin">获取方案</a>
                 </div>
             </div>
         </div>
@@ -78,9 +78,9 @@
             },
             checkLogin(){
                 if(window.localStorage.getItem('user')){
-                    this.$router.push('/step');
+                    this.$router.push('/step/loan');
                 }else{
-                    this.$router.push('/login');
+                    this.$router.push('/step');
                 }
             }
         },

@@ -1,10 +1,10 @@
 <template>
     <div class="free-register">
         <div class="a-header">注册</div>
-        <div class="success-tips" v-if="isRegister">
-            <span class="welcome">您好，您己注册成功！</span>请登录后台：{{adminLogin}}补充信息,我们会尽快和您取得联系!
-            <x-button type="primary" class="tag-read" mini ref="tagRead" :data-clipboard-text="adminLogin" @click.native="copyUrl">复制链接地址</x-button>
-        </div>
+<!--        <div class="success-tips" v-if="isRegister">-->
+<!--            <span class="welcome">您好，您己注册成功！</span>请登录后台：{{adminLogin}}补充信息,我们会尽快和您取得联系!-->
+<!--            <x-button type="primary" class="tag-read" mini ref="tagRead" :data-clipboard-text="adminLogin" @click.native="copyUrl">复制链接地址</x-button>-->
+<!--        </div>-->
         <div class="user-info">
             <group title="您的姓名" label-width="0" label-align="right">
                 <x-input title="" placeholder="请输入您的姓名" v-model="name" type="text"></x-input>
@@ -56,17 +56,17 @@
                 identifyCode: '',
                 roleType: null,
                 channel: '',
-                adminLogin: public_methods.url.adminLogin,
-                isRegister: false
+                routerObj: null
             }
         },
         created() {
 
         },
         mounted() {
-            this.identifyCode = this.$route.query.identifyCode;
-            this.roleType = this.$route.query.roleType;
-            this.channel = this.$route.query.channel;
+            this.routerObj = this.$route.query;
+            this.identifyCode = this.routerObj.identifyCode || '';
+            this.roleType = this.routerObj.roleType || '';
+            this.channel = this.routerObj.channel || '';
         },
         methods: {
             submitInfo() {
@@ -83,7 +83,10 @@
                     .then(response => {
                         let data = response.data;
                         if (data.errorCode === 0) {
-                            this.isRegister = true;
+                            this.routerObj['userName'] = this.name;
+                            console.log(this.routerObj);
+                            this.$router.push({path: '/agent/free-register-success', query: this.routerObj});
+                            // this.isRegister = true;
                         } else {
                             this.toast(data.message);
                         }
@@ -93,7 +96,7 @@
                     });
             },
             backHome() {
-                this.$router.push('/');
+                this.$router.push({path: '/landing/brush-face', query: this.routerObj});
             },
             getPhoneCode() {
                 if (this.phone == '' || !PHONE_REGX.test(this.phone)) {
@@ -119,18 +122,18 @@
 
                 });
             },
-            copyUrl() {
-                let clipboard = new this.Clipboard('.tag-read');
-                clipboard.on('success', e => {
-                    this.toast("复制成功,请在PC端打开链接");
-                    clipboard.destroy();
-                });
-                clipboard.on('error', e => {
-                    // 不支持复制
-                    this.toast('该浏览器不支持自动复制');
-                    clipboard.destroy();
-                })
-            },
+            // copyUrl() {
+            //     let clipboard = new this.Clipboard('.tag-read');
+            //     clipboard.on('success', e => {
+            //         this.toast("复制成功,请在PC端打开链接");
+            //         clipboard.destroy();
+            //     });
+            //     clipboard.on('error', e => {
+            //         // 不支持复制
+            //         this.toast('该浏览器不支持自动复制');
+            //         clipboard.destroy();
+            //     })
+            // },
             toast(text) {
                 this.$vux.toast.show({
                     type: 'text',
@@ -148,7 +151,7 @@
 
 <style lang="less" scoped>
     .free-register {
-        .success-tips{background: #f0f9eb; padding: 10px;}
+        /*.success-tips{background: #f0f9eb; padding: 10px;}*/
         .tag-read{margin-top: 5px;}
         .welcome{display: block; font-weight: 700;}
         .a-header {
